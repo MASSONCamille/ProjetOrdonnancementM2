@@ -4,3 +4,5 @@
 *.filters
 /x64/
 /.vs/
+/cmake-build-debug/
+CMakeLists.txt
