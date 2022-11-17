@@ -1,6 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 
 int main() {
     printf("Hello, World!\n");
-    return 0;
+    char* oui = (char*)calloc(12, sizeof(char));
+    (void)scanf("%c", oui);
+    free(oui);
 }
