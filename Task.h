@@ -4,7 +4,7 @@
 #define JOBS 4
 
 typedef struct machine {
-	task array[JOBS];
+	task* array;//JOBS
 }machine;
 
 typedef struct task{
@@ -15,11 +15,11 @@ typedef struct task{
 }task;
 
 typedef struct sol_u {
-	machine array[TASKS_PER_JOB];
+	machine* array;//TASKS PER JOBS
 }sol_u;
 
 typedef struct sol_c {
-	uint8_t array[TASKS_PER_JOB*JOBS];
+	uint8_t* array;//TASKS PER JOBS*JOBS
 }sol_c;
 
 sol_c solution_encoding(sol_u input);

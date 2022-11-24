@@ -10,10 +10,18 @@ sol_u jobs_increasing_time(task* input){
 		sums[input[i].job-1] += input[i].length;
 	}
 
-	int sorted_jobs[JOBS];
+	uint8_t sorted_jobs[JOBS] = sums[JOBS];
 
+	quicksort(sorted_jobs, 0, JOBS - 1);
 
 	sol_u* sol = (sol_u*)malloc(sizeof(sol_u));
+	for (int i = 0; i < JOBS; i++) {
+		sol->array = (machine*)calloc(JOBS, sizeof(machine));
+	}
+
+	for (int i = 0; i < JOBS; i++) {
+
+	}
 
 	free(sums);
 
