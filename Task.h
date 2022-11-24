@@ -3,16 +3,16 @@
 #define TASKS_PER_JOB 3
 #define JOBS 4
 
-typedef struct machine {
-	task* array;//JOBS
-}machine;
-
 typedef struct task{
-	uint8_t machine_number, //where the task will be 
-		job, //which job the task is part of
-		length, //how much time the task will take to be completed
-		start_date; //when will the task start on machine_number, null if not placed
+    uint8_t machine_number, //where the task will be
+    job, //which job the task is part of
+    length, //how much time the task will take to be completed
+    start_date; //when will the task start on machine_number, null if not placed
 }task;
+
+typedef struct machine {
+	struct task* array;//JOBS
+}machine;
 
 typedef struct sol_u {
 	machine* array;//TASKS PER JOBS

@@ -6,3 +6,4 @@
 /.vs/
 /cmake-build-debug/
 CMakeLists.txt
+test.c
