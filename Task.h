@@ -5,7 +5,7 @@
 
 typedef struct machine {
 	task array[JOBS];
-}malchine;
+}machine;
 
 typedef struct task{
 	uint8_t machine_number, //where the task will be 
@@ -15,7 +15,7 @@ typedef struct task{
 }task;
 
 typedef struct sol_u {
-	struct machine array[TASKS_PER_JOB];
+	machine array[TASKS_PER_JOB];
 }sol_u;
 
 typedef struct sol_c {
