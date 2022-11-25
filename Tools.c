@@ -1,5 +1,4 @@
 #include "Tools.h"
-#include <stdint.h>
 
 void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
     uint8_t i, j, pivot, temp;
