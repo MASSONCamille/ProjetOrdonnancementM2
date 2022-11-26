@@ -12,11 +12,11 @@ typedef struct task{
 }task;
 
 typedef struct machine {
-	struct task* array;//JOBS
+	struct task** array;//JOBS
 }machine;
 
 typedef struct sol_u {
-	machine* array;//TASKS PER JOBS
+	machine** array;//TASKS PER JOBS
 }sol_u;
 
 typedef struct sol_c {
