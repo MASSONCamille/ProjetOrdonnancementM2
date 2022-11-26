@@ -22,9 +22,9 @@ typedef struct sol_c {
 	uint8_t* array;//TASKS PER JOBS*JOBS
 }sol_c;
 
-sol_c solution_encoding(sol_u input);
+sol_c* solution_encoding(sol_u* input);
 
-sol_u solution_decoding(sol_c input);
+sol_u* solution_decoding(sol_c* input);
 
 uint8_t task_encoding(task input);
 

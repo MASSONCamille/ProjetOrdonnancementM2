@@ -26,7 +26,7 @@ void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
     }
 }
 
-uint8_t addTaskToSolU(sol_u* sol, task* t) {
+int8_t addTaskToSolU(sol_u* sol, task* t) {
     uint8_t k = 0;
     while (sol->machine_list[t->machine_number]->task_list[k])
     {
@@ -84,10 +84,7 @@ sol_u* allocateNewSolU(void)
 		return NULL;
 	}
 
-	void* test_calloc = calloc(TASKS_PER_JOB, sizeof(machine*));
-	printf("%x", sol);
-	printf("%x", *sol);
-	sol->machine_list = (machine**)test_calloc;
+	sol->machine_list = (machine**)calloc(TASKS_PER_JOB, sizeof(machine*));
 
 	if (sol->machine_list == NULL)
 	{
