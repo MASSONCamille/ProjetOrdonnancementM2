@@ -25,10 +25,17 @@ sol_u* jobs_increasing_time(task* input) {
 	sol_u* sol = allocateNewSolU();
 
 	for (int i = 0; i < JOBS; i++) {
-
+		uint8_t aux = sorted_jobs[i];
+		for (int j = 0; j < TASKS_PER_JOB; j++) {
+			if (addTaskToSolU(sol, &input[aux + j]) == -1)
+			{
+				return NULL;
+			}
+		}
 	}
-
 	free(sums);
+
+	return sol;
 }
 
 sol_u* increasing_task_length(task* input){
