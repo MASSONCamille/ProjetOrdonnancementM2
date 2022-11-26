@@ -3,6 +3,7 @@
 #define TASKS_PER_JOB 3
 #define JOBS 4
 
+	struct task* array;//JOBS
 typedef struct task{
     uint8_t machine_number, //where the task will be
     job, //which job the task is part of
