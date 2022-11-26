@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "Tools.h"
 
 void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
@@ -27,7 +28,7 @@ void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
 
 uint8_t addTaskToSolU(sol_u* sol, task* t) {
     uint8_t k = 0;
-    while (sol->array[t->machine_number]->array[k])
+    while (sol->machine_list[t->machine_number]->task_list[k])
     {
 		k++;
     }
@@ -38,11 +39,11 @@ uint8_t addTaskToSolU(sol_u* sol, task* t) {
 	{
 		for (uint8_t j = 0; j < JOBS; j++)
 		{
-			if (sol->array[j]->array[i] ==NULL || sol->array[j]->array[i]->job == NULL)
+			if (sol->machine_list[j]->task_list[i] ==NULL || sol->machine_list[j]->task_list[i]->job == 0)
 			{
 				return -1;
 			}
-			if (sol->array[j]->array[i]->job == t->job)
+			if (sol->machine_list[j]->task_list[i]->job == t->job)
 			{
 				if (b<t->start_date+t->length)
 				{
@@ -52,52 +53,91 @@ uint8_t addTaskToSolU(sol_u* sol, task* t) {
 		}
 	}
 
-	uint8_t a = sol->array[t->machine_number]->array[k-1]->start_date+ sol->array[t->machine_number]->array[k-1]->length;
+	for (uint8_t i = 1; i < TASKS_PER_JOB; i++)
+	{
+		if (sol->machine_list[t->machine_number]->task_list[i] == NULL)
+		{
+			return -1;
+		}
+		uint8_t start = sol->machine_list[t->machine_number]->task_list[i]->start_date + sol->machine_list[t->machine_number]->task_list[i]->length;
+		uint8_t end = sol->machine_list[t->machine_number]->task_list[i+1]->start_date;
+		if (end - start >= t->length && start < b)
+		{
+			b = start;
+		}
+	}
+
+	uint8_t a = sol->machine_list[t->machine_number]->task_list[k-1]->start_date+ sol->machine_list[t->machine_number]->task_list[k-1]->length;
 	uint8_t start_date = (a > b) ? a : b;
 
 	t->start_date = start_date;
-	sol->array[t->machine_number]->array[k] = t;
+	sol->machine_list[t->machine_number]->task_list[k] = t;
 
 	return 1;
 }
 
-sol_u* allocateNewSolU()
+sol_u* allocateNewSolU(void)
 {
 	sol_u* sol = (sol_u*)malloc(sizeof(sol_u));
 	if (sol == NULL)
 	{
 		return NULL;
 	}
-	sol->array = (machine**)calloc(TASKS_PER_JOB, sizeof(machine*));
 
-	if (sol->array == NULL)
+	void* test_calloc = calloc(TASKS_PER_JOB, sizeof(machine*));
+	printf("%x", sol);
+	printf("%x", *sol);
+	sol->machine_list = (machine**)test_calloc;
+
+	if (sol->machine_list == NULL)
 	{
 		return NULL;
 	}
 	for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
 	{
-		sol->array[i] = (machine*)calloc(1, sizeof(machine));
+		sol->machine_list[i] = (machine*)calloc(1, sizeof(machine));
 	}
 
-	if (sol->array == NULL)
+	if (sol->machine_list == NULL)
 	{
 		return NULL;
 	}
 	for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
-		if (sol->array[i] == NULL)
+		if (sol->machine_list[i] == NULL)
 		{
 			return NULL;
 		}
-		sol->array[i]->array = (task**)calloc(JOBS, sizeof(task*));
+		sol->machine_list[i]->task_list = (task**)calloc(JOBS, sizeof(task*));
 		for (uint8_t j = 0; j < TASKS_PER_JOB; j++)
 		{
-			if (sol->array[i]->array == NULL || sol->array[i]->array[j] == NULL)
-			{
+			if (sol->machine_list[i]->task_list == NULL)
 				return NULL;
-			}
-			sol->array[i]->array[j] = (task*)calloc(1, sizeof(task));
+			sol->machine_list[i]->task_list[j] = (task*)calloc(1, sizeof(task));
 		}
 	}
 
+	return sol;
+}
+
+sol_u* freeSolU(sol_u* sol) {
+	if (sol == NULL)
+	{
+		return NULL;
+	}
+	for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
+
+		for (uint8_t j = 0; j < TASKS_PER_JOB; j++)
+		{
+			free(sol->machine_list[i]->task_list[j]);
+		}
+		free(sol->machine_list[i]->task_list);
+	}
+	for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
+		free(sol->machine_list[i]);
+	}
+	free(sol->machine_list);
+	free(sol);
+	sol = NULL;
+	
 	return sol;
 }

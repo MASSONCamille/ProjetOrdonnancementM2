@@ -3,7 +3,6 @@
 #define TASKS_PER_JOB 3
 #define JOBS 4
 
-	struct task* array;//JOBS
 typedef struct task{
     uint8_t machine_number, //where the task will be
     job, //which job the task is part of
@@ -12,11 +11,11 @@ typedef struct task{
 }task;
 
 typedef struct machine {
-	struct task** array;//JOBS
+	struct task** task_list;//JOBS
 }machine;
 
 typedef struct sol_u {
-	machine** array;//TASKS PER JOBS
+	machine** machine_list;//TASKS PER JOBS
 }sol_u;
 
 typedef struct sol_c {

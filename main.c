@@ -1,11 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Task.h"
+#include "Tools.h"
 
 int main(void) {
-    printf("Hello, World!\n");
-    char* oui = (char*)calloc(12, sizeof(char));
-    (void)scanf_s("%c", oui, 1);
-    free(oui);
-    return 0;
+	sol_u* test = allocateNewSolU();
+	printf("%d", test->machine_list[0]->task_list[0]->length);
 }

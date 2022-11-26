@@ -4,6 +4,8 @@
 
 void quicksort(uint8_t* number, uint8_t first, uint8_t last);
 
-void addTaskToSolU(sol_u* sol, task* t);
+uint8_t addTaskToSolU(sol_u* sol, task* t);
 
-sol_u* allocateNewSolU();
+sol_u* allocateNewSolU(void);
+
+sol_u* freeSolU(sol_u* sol);
