@@ -2,9 +2,7 @@
 #ifdef WIN32
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#endif // WIN32
-
-
+#endif
 #include <stdlib.h>
 #include <stdint.h>
 #include "task.h"
