@@ -1,7 +1,11 @@
 #pragma once
+#ifdef WIN32
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#endif // WIN32
+
+
+#include <stdlib.h>
 #include <stdint.h>
 #include "task.h"
 
