@@ -1,13 +1,18 @@
 #pragma once
 #include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <stdio.h>
+
 #define TASKS_PER_JOB 3
 #define JOBS 4
 
 typedef struct task{
-    uint8_t machine_number, //where the task will be
-    job, //which job the task is part of
-    length, //how much time the task will take to be completed
-    start_date; //when will the task start on machine_number, null if not placed
+	uint8_t machine_number, //where the task will be
+		job, //which job the task is part of
+		length, //how much time the task will take to be completed 
+		start_date; //when will the task start on machine_number, INT8_MAX if not placed
 }task;
 
 typedef struct machine {
@@ -29,3 +34,9 @@ sol_u* solution_decoding(sol_c* input);
 uint8_t task_encoding(task input);
 
 task task_decoding(uint8_t input);
+
+task** generateTasks(void);
+
+task** freeTasks(task** input);
+
+int8_t printTask(task* t);

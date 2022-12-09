@@ -5,7 +5,6 @@
 #endif
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 #include <stdint.h>
 #include <math.h>
 #include "task.h"
@@ -18,10 +17,4 @@ sol_u* allocateNewSolU(void);
 
 sol_u* freeSolU(sol_u* sol);
 
-task** generateTasks(void);
-
-task** freeTasks(task** input);
-
 int8_t printSolutionU(sol_u* sol);
-
-int8_t printTask(task* t);
