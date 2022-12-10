@@ -150,6 +150,20 @@ sol_u* freeSolU(sol_u* sol) {
 	return sol;
 }
 
+void* freeAll(sol_u* sol, task** tasks) {
+	for (int i = 0; i < TASKS_PER_JOB; i++) {
+		for (int j = 0; j < JOBS; j++) {
+			sol->machine_list[i]->task_list[j] = NULL;
+		}
+	}
+
+	if (freeSolU(sol) != NULL)
+		exit(1);
+	if (freeTasks(tasks) != NULL)
+		exit(1);
+	return NULL;
+}
+
 int8_t printSolutionU(sol_u* sol) {
 	if (sol == NULL)
 		return -1;
