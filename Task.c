@@ -1,5 +1,5 @@
 #include "Task.h"
-
+//faux
 task** generateTasks(void) {
 	task** data = (task**)calloc(JOBS * TASKS_PER_JOB, sizeof(task*));
 	if (data == NULL)
@@ -12,11 +12,11 @@ task** generateTasks(void) {
 	srand((unsigned int)time(NULL));
 
 	for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
-		data[i]->job = (uint8_t)floor((double)i / JOBS);
+		data[i]->job = (uint8_t)floor((double)i / JOBS+1);
 		data[i]->length = (uint8_t)floor(rand()%6);
 		data[i]->machine_number = (uint8_t)floor(i % TASKS_PER_JOB);
 		data[i]->start_date = INT8_MAX;
-		//printTask(data[i]);
+		printTask(data[i]);
 	}
 
 	

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <string.h>
 #include "Heuristics.h"
 #include "Tools.h"
 
@@ -11,18 +13,17 @@ sol_u* jobs_increasing_time(task** input) {
 	}a;
 
 	a* jobs = (a*)calloc(1, sizeof(a));
-	jobs->arr = (uint8_t*)calloc(TASKS_PER_JOB, sizeof(uint8_t));
-	jobs->num = (uint8_t*)calloc(TASKS_PER_JOB, sizeof(uint8_t));
+	jobs->arr = (uint8_t*)calloc(JOBS, sizeof(uint8_t));
+	jobs->num = (uint8_t*)calloc(JOBS, sizeof(uint8_t));
 
-	for (int i = 0; i < TASKS_PER_JOB; i++)
+	for (uint8_t i = 0; i < JOBS; i++)
 	{
 		jobs->num[i] = i;
 	}
 
 
-	for (int i = 0; i < TASKS_PER_JOB * JOBS; i++) {
-		if (jobs->arr != NULL)
-		{
+	for (uint8_t i = 0; i < TASKS_PER_JOB * JOBS; i++) {
+		if (jobs->arr != NULL){
 			jobs->arr[input[i]->job - 1] += input[i]->length;
 		}
 		else
@@ -31,22 +32,29 @@ sol_u* jobs_increasing_time(task** input) {
 		}
 	}
 
-	uint8_t* sorted_jobs = jobs->arr;
+	uint8_t* sorted_jobs=(uint8_t*)calloc(JOBS*TASKS_PER_JOB,sizeof(uint8_t));
 
+	if(memcpy(sorted_jobs, jobs->arr,JOBS*TASKS_PER_JOB) == NULL)
+		return NULL;
 	quicksort(sorted_jobs, 0, JOBS - 1);
 
 	sol_u* sol = allocateNewSolU();
 	//wrong
+
+
 	for (int i = 0; i < JOBS; i++) {
-		uint8_t aux = sorted_jobs[i];
-		for (int j = 0; j < TASKS_PER_JOB; j++) {
-			if (addTaskToSolU(sol, input[aux + j]) == -1)
-			{
-				return NULL;
-			}
+		uint8_t aux = searchArrayForIndex(jobs->arr, JOBS, sorted_jobs[i]);
+		for (uint8_t j = 0; j < JOBS * TASKS_PER_JOB; j++) {
+			if (input[j]->job == aux)
+				addTaskToSolU(sol, input[j]);
 		}
 	}
-	//free(sums);
+
+
+	free(sorted_jobs);
+	free(jobs->arr);
+	free(jobs->num);
+	free(jobs);
 
 	return sol;
 }

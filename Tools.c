@@ -1,5 +1,5 @@
 #include "Tools.h"
-
+//faux?
 void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
     uint8_t i, j, pivot, temp;
     if (first < last) {
@@ -28,11 +28,13 @@ void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
 int8_t addTaskToSolU(sol_u* sol, task* t) {
 	uint8_t k = 0;
 	t->start_date = 0;
-	while (sol->machine_list[t->machine_number]->task_list[k]->start_date!= INT8_MAX)
-    {
+	printf("%d\n", sol->machine_list[t->machine_number]->task_list[k]->start_date);
+	//printSolutionU(sol);
+	while (sol->machine_list[t->machine_number]->task_list[k] != NULL && sol->machine_list[t->machine_number]->task_list[k]->start_date != INT8_MAX)
+	{
 		k++;
-    }
-
+	}
+	printf("%d %s\n", k,"fin boucle");
 	uint8_t b = 0;
 
 	for (uint8_t j = 0; j < TASKS_PER_JOB; j++)
@@ -179,5 +181,15 @@ int8_t printSolutionU(sol_u* sol) {
 	}
 
 	return 1;
+}
+
+uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val) {
+	for (uint8_t i = 0; i < size; i++)
+	{
+		if (arr[i] == val)
+			return i;
+	}
+	
+	return UINT8_MAX;
 }
 

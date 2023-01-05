@@ -20,3 +20,5 @@ sol_u* freeSolU(sol_u* sol);
 void* freeAll(sol_u* sol, task** tasks);
 
 int8_t printSolutionU(sol_u* sol);
+
+uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val);

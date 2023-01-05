@@ -13,13 +13,9 @@ int main(void) {
 	task** data = generateTasks();
 	sol_u* test= allocateNewSolU();
 
-	//test = jobs_increasing_time(data);
+	test = jobs_increasing_time(data);
 
 	printSolutionU(test);
-
-	for (int i = 0; i < JOBS * TASKS_PER_JOB; i++) {
-		addTaskToSolU(test, data[i]);
-	}
 
 	freeAll(test, data);
 	#ifdef _WIN32
