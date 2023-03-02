@@ -14,6 +14,8 @@ task** generateTasks(void) {
 	for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
 		data[i]->job = (uint8_t)floor((double)i / JOBS+1);
 		data[i]->length = (uint8_t)floor(rand()%6);
+		if (data[i]->length == 0)
+			data[i]->length = 5;
 		data[i]->machine_number = (uint8_t)floor(i % TASKS_PER_JOB);
 		data[i]->start_date = INT8_MAX;
 		printTask(data[i]);
