@@ -59,6 +59,14 @@ sol_u* jobs_increasing_time(task** input) {
 	return sol;
 }
 
+sol_u* FIFO(task* input){
+    return NULL;
+}
+
+sol_u* minimizing_Cmax(task* input){
+    return NULL;
+}
+
 sol_u* increasing_task_length(task* input){
-	return NULL;
+    return NULL;
 }

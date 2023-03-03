@@ -25,6 +25,54 @@ void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
     }
 }
 
+sortableTask **lslTaskTolstST(task **lsttask, int size_lst) {
+    sortableTask** lstres = (sortableTask**)calloc(size_lst, sizeof(sortableTask*));
+    if (lstres == NULL)
+        return NULL;
+    for (uint8_t i = 0; i < size_lst; i++) {
+        lstres[i] = (sortableTask*)calloc(1, sizeof(sortableTask));
+        if (lstres[i] == NULL)
+            return NULL;
+    }
+
+    for (int i = 0; i < size_lst; ++i) {
+        lstres[i]->t = lsttask[i];
+        lstres[i]->sortValue = lsttask[i]->length;
+    }
+
+    return lstres;
+}
+
+task **lstSTTolslTask(sortableTask **lsttask, int size_lst) {
+    return NULL;
+}
+
+void taskQS(sortableTask** lsttsask, uint8_t first, uint8_t last){
+    uint8_t i, j, pivot;
+    sortableTask temp;
+    if (first < last) {
+        pivot = first;
+        i = first;
+        j = last;
+        while (i < j) {
+            while (lsttsask[i]->sortValue <= lsttsask[pivot]->sortValue && i < last)
+                i++;
+            while (lsttsask[j]->sortValue > lsttsask[pivot]->sortValue)
+                j--;
+            if (i < j) {
+                temp = *lsttsask[i];
+                lsttsask[i] = lsttsask[j];
+                lsttsask[j] = temp;
+            }
+        }
+        temp = *lsttsask[pivot];
+        lsttsask[pivot] = lsttsask[j];
+        lsttsask[j] = temp;
+        quicksort(lsttsask, first, j - 1);
+        quicksort(lsttsask, j + 1, last);
+    }
+}
+
 int8_t addTaskToSolU(sol_u* sol, task* t) {
 	uint8_t k = 0;
 	t->start_date = 0;
@@ -192,4 +240,3 @@ uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val) {
 	
 	return UINT8_MAX;
 }
-

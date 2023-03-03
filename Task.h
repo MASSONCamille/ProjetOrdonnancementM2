@@ -37,6 +37,8 @@ task task_decoding(uint8_t input);
 
 task** generateTasks(void);
 
+task** generateTasksBis(void);
+
 task** freeTasks(task** input);
 
 int8_t printTask(task* t);

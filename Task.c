@@ -25,6 +25,28 @@ task** generateTasks(void) {
 	return data;
 }
 
+task** generateTasksBis(void) {
+    task** data = (task**)calloc(JOBS * TASKS_PER_JOB, sizeof(task*));
+    if (data == NULL)
+        return NULL;
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+        data[i] = (task*)calloc(1, sizeof(task));
+        if (data[i] == NULL)
+            return NULL;
+    }
+    srand((unsigned int)time(NULL));
+
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+        data[i]->job = (uint8_t)floor((double)i / TASKS_PER_JOB);
+        data[i]->length = (uint8_t)floor((rand()%6)+1);
+        data[i]->machine_number = (uint8_t)floor(i % TASKS_PER_JOB);
+        data[i]->start_date = INT8_MAX;
+    }
+
+
+    return data;
+}
+
 task** freeTasks(task** input) {
 	if (input == NULL)
 		return NULL;
