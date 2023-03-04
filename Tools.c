@@ -1,29 +1,5 @@
 #include "Tools.h"
 //faux?
-void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
-    uint8_t i, j, pivot, temp;
-    if (first < last) {
-        pivot = first;
-        i = first;
-        j = last;
-        while (i < j) {
-            while (number[i] <= number[pivot] && i < last)
-                i++;
-            while (number[j] > number[pivot])
-                j--;
-            if (i < j) {
-                temp = number[i];
-                number[i] = number[j];
-                number[j] = temp;
-            }
-        }
-        temp = number[pivot];
-        number[pivot] = number[j];
-        number[j] = temp;
-        quicksort(number, first, j - 1);
-        quicksort(number, j + 1, last);
-    }
-}
 
 int cmp (const void *a, const void *b)
 {
@@ -91,9 +67,8 @@ void taskQS(task** tasklist, size_t taille){
 int8_t addTaskToSolU(sol_u* sol, task* t) {
 	uint8_t k = 0;
 	t->start_date = 0;
-	printf("%d\n", sol->machine_list[t->machine_number]->task_list[k]->start_date);
 	//printSolutionU(sol);
-	while (sol->machine_list[t->machine_number]->task_list[k] != NULL && sol->machine_list[t->machine_number]->task_list[k]->start_date != INT8_MAX)
+	while (sol->machine_list[t->machine_number]->task_list[k] != NULL && sol->machine_list[t->machine_number]->task_list[k]->start_date != INT8_MAX && k<TASKS_PER_JOB)
 	{
 		k++;
 	}

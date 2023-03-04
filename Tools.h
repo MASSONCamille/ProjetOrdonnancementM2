@@ -9,8 +9,6 @@
 #include <math.h>
 #include "task.h"
 
-void quicksort(uint8_t* number, uint8_t first, uint8_t last);
-
 void taskQS(task** tasklist, size_t taille);
 
 int8_t addTaskToSolU(sol_u* sol, task* t);
@@ -24,3 +22,5 @@ void* freeAll(sol_u* sol, task** tasks);
 int8_t printSolutionU(sol_u* sol);
 
 uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val);
+
+int cmp(const void* a, const void* b);

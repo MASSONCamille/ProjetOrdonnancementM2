@@ -32,11 +32,12 @@ sol_u* jobs_increasing_time(task** input) {
 		}
 	}
 
-	uint8_t* sorted_jobs=(uint8_t*)calloc(JOBS*TASKS_PER_JOB,sizeof(uint8_t));
+	uint8_t** sorted_jobs=(uint8_t**)calloc(JOBS*TASKS_PER_JOB,sizeof(uint8_t*));
 
-	if(memcpy(sorted_jobs, jobs->arr,JOBS*TASKS_PER_JOB) == NULL)
+	if(memcpy(sorted_jobs, &jobs->arr,JOBS*TASKS_PER_JOB) == NULL)
 		return NULL;
-	quicksort(sorted_jobs, 0, JOBS - 1);
+	printf("%d\n", (sizeof(sorted_jobs))/(sizeof(uint8_t*)));
+	qsort(sorted_jobs, (sizeof(sorted_jobs)) / (sizeof(uint8_t*)), sizeof(uint8_t*), cmp);
 
 	sol_u* sol = allocateNewSolU();
 	//wrong
