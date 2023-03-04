@@ -16,6 +16,7 @@ int main(void) {
 	test = jobs_increasing_time(data);
 
 	printSolutionU(test);
+	dumpSolutionUToFile(test);
 
 	freeAll(test, data);
 	#ifdef _WIN32
@@ -24,5 +25,6 @@ int main(void) {
 		_CrtMemDumpStatistics(&s3);
 	#endif
 
+	printf("\nFIN");
 	return 0;
 }

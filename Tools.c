@@ -18,14 +18,14 @@ void taskQS(task** tasklist, size_t taille){
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (int i = 0; i < taille; ++i) {
+    for (uint8_t i = 0; i < taille; ++i) {
         a[i] = (uint8_t*)malloc(2* sizeof(uint8_t));
         if (a[i] == NULL){
             fprintf(stderr, "Out of memory");
             exit(0);
         }
     }
-    for (int i = 0; i < taille; ++i) {
+    for (uint8_t i = 0; i < taille; ++i) {
         a[i][0] = tasklist[i]->length;
         a[i][1] = i;
     }
@@ -59,7 +59,7 @@ void taskQS(task** tasklist, size_t taille){
         tasklist[i] = buffer[ a[i][1] ];
     }
 
-    for (int i = 0; i < taille; i++) {
+    for (uint8_t i = 0; i < taille; i++) {
         free(a[i]);
     }
     free(a);
@@ -90,13 +90,13 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
 			{
 				if (b<t->start_date+t->length)
 				{
-					b = t->start_date + t->length;
+					b = t->start_date + sol->machine_list[j]->task_list[i]->length;
 				}
 			}
 		}
 	}
 
-	for (uint8_t i = 1; i < JOBS - 1; i++)
+	for (uint8_t i = 0; i < JOBS - 1; i++)
 	{
 		if (sol->machine_list[t->machine_number]->task_list[i] == NULL)
 		{
@@ -231,4 +231,47 @@ uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val) {
 	}
 	
 	return UINT8_MAX;
+}
+
+void dumpSolutionUToFile(sol_u* sol)
+{
+	FILE* f = fopen("dump", "w");
+	if (f == NULL)
+		exit(1);
+	for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+	{
+
+		for (uint8_t j = 0; j < JOBS; j++)
+		{
+			int length = 0;
+			char* str;
+			task* aux = sol->machine_list[i]->task_list[j];
+			fputs("\nNEW TASK\n", f);
+			fputs("JOB: ", f);
+			length = snprintf(NULL, 0, "%d", aux->job);
+			str = malloc(length + 1);
+			snprintf(str, length + 1, "%d", aux->job);
+			fputs(str, f);
+			fputs("\nMACHINE: ", f);
+			free(str);
+			length = snprintf(NULL, 0, "%d", aux->machine_number);
+			str = malloc(length + 1);
+			snprintf(str, length + 1, "%d", aux->machine_number);
+			fputs(str, f);
+			fputs("\nSTART DATE :", f);
+			free(str);
+			length = snprintf(NULL, 0, "%d", aux->start_date);
+			str = malloc(length + 1);
+			snprintf(str, length + 1, "%d", aux->start_date);
+			fputs(str, f);
+			fputs("\nLENGTH: ", f);
+			free(str);
+			length = snprintf(NULL, 0, "%d", aux->length);
+			str = malloc(length + 1);
+			snprintf(str, length + 1, "%d", aux->length);
+			fputs(str, f);
+			free(str);
+		}
+	}
+	fclose(f);
 }

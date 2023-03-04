@@ -36,7 +36,7 @@ sol_u* jobs_increasing_time(task** input) {
 
 	if(memcpy(sorted_jobs, jobs->arr,JOBS*TASKS_PER_JOB) == NULL)
 		return NULL;
-	qsort(sorted_jobs, JOBS*TASKS_PER_JOB, sizeof(uint8_t*), cmpInt);
+	qsort(sorted_jobs, JOBS*TASKS_PER_JOB, sizeof(uint8_t), cmpInt);
 
 	sol_u* sol = allocateNewSolU();
 	//wrong
