@@ -10,7 +10,7 @@ int main(void) {
 	_CrtMemCheckpoint(&s1);
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 #endif
-	task** data = generateTasks();
+	task** data = generateTasksBis();
 	sol_u* test= allocateNewSolU();
 
 	test = jobs_increasing_time(data);

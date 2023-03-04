@@ -24,3 +24,5 @@ int8_t printSolutionU(sol_u* sol);
 uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val);
 
 int cmp(const void* a, const void* b);
+
+int cmpInt(uint8_t a, uint8_t b);

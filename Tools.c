@@ -1,5 +1,8 @@
 #include "Tools.h"
-//faux?
+
+int cmpInt(uint8_t a, uint8_t b){
+	return a-b;
+}
 
 int cmp (const void *a, const void *b)
 {
@@ -72,7 +75,7 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
 	{
 		k++;
 	}
-	printf("%d %s\n", k,"fin boucle");
+	//printf("%d %s\n", k,"fin boucle");
 	uint8_t b = 0;
 
 	for (uint8_t j = 0; j < TASKS_PER_JOB; j++)
@@ -210,7 +213,6 @@ int8_t printSolutionU(sol_u* sol) {
 
 	for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
 	{
-		printf("Machine: %d \n", i + 1);
 		for (uint8_t j = 0; j < JOBS; j++)
 		{
 			if (printTask(sol->machine_list[i]->task_list[j]) == -1)
