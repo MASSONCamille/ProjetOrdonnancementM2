@@ -7,13 +7,15 @@
 
 
 int main(void) {
-    task** data = generateTasksBis();
-
-    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
-        printTask(data[i]);
-        printf("\n");
-    }
-    printf("fin generation\n\n");
+    task **data = generateTasksBis();
+    sol_u *test = allocateNewSolU();
+    test = minimizing_Cmax(data);
+//
+//    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
+//        printTask(data[i]);
+//        printf("\n");
+//    }
+//    printf("fin generation\n\n");
 
     /*uint8_t** a = (uint8_t**)malloc((TASKS_PER_JOB*JOBS) * sizeof(uint8_t *));
     if (a == NULL){
@@ -63,12 +65,12 @@ int main(void) {
     }
     free(a);*/
 
-    taskQS(data, TASKS_PER_JOB*JOBS);
-
-    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
-        printTask(data[i]);
-        printf("\n");
-    }
+//    taskQS(data, TASKS_PER_JOB*JOBS);
+//
+//    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
+//        printTask(data[i]);
+//        printf("\n");
+//    }
 
 
 

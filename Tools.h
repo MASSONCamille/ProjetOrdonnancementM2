@@ -11,6 +11,12 @@
 
 void taskQS(task** tasklist, size_t taille);
 
+int getCmax(task **tasklist, task *taskToAdd);
+
+int getJobRestant(task **tasklist, task *taskToAdd);
+
+int nbTachePasPlacee(task **tasklist);
+
 int8_t addTaskToSolU(sol_u* sol, task* t);
 
 sol_u* allocateNewSolU(void);
