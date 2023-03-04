@@ -59,6 +59,108 @@ sol_u *FIFO(task *input) {
     return NULL;
 }
 
+task getTaskMinimizing_Cmax(task **input) {
+    task res;
+
+    int tailleTemp = 0;
+    task **temp = (task **) calloc(JOBS * TASKS_PER_JOB, sizeof(task *));
+    if (temp == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+        temp[i] = (task *) calloc(1, sizeof(task));
+        if (temp[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+
+    }
+    //Verification égalité durée op
+    uint8_t minlength = INT8_MAX;
+    do {
+        if (tailleTemp + 1 == TASKS_PER_JOB * JOBS) {
+            break;
+        }
+        if (input[tailleTemp]->start_date == INT8_MAX) {
+            minlength = input[tailleTemp]->length;
+            temp[tailleTemp] = input[tailleTemp];
+        }
+        tailleTemp++;
+    } while (minlength == input[tailleTemp]->length);
+
+    //Une durée op mini
+    if (tailleTemp == 1) {
+        res = *temp[0];
+        free(temp);
+        return res;
+    }
+
+    //Min Cmax du tableau tailleTemp
+    uint8_t *tabMinCmax = (uint8_t *) calloc(tailleTemp, sizeof(uint8_t));
+    for (int i = 0; i < tailleTemp; ++i) {
+        task *test = temp[i];
+        tabMinCmax[i] = getCmax(input, test);
+    }
+    //EGALITE Cmax
+    int minCmax = INT8_MAX;
+    for (int i = 0; i < tailleTemp; ++i) {
+        if (tabMinCmax[i] < minCmax) {
+            minCmax = tabMinCmax[i];
+        }
+    }
+
+    task **temp2 = (task **) calloc(tailleTemp, sizeof(task *));
+    if (temp2 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < tailleTemp; i++) {
+        temp2[i] = (task *) calloc(1, sizeof(task));
+        if (temp2[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+
+    int tailleTemp2 = 0;
+    for (int i = 0; i < tailleTemp; ++i) {
+        if (tabMinCmax[i] == minCmax) {
+            temp2[i] = temp[i];
+            tailleTemp2++;
+        }
+    }
+
+    //Un Cmax mini
+    if (tailleTemp2 == 1) {
+        res = *temp2[0];
+        free(temp);
+        free(temp2);
+        return res;
+    }
+
+    uint8_t *tabMinJobRestant = (uint8_t *) calloc(tailleTemp2, sizeof(uint8_t));
+    for (int i = 0; i < tailleTemp2; ++i) {
+        task *test = temp2[i];
+        tabMinJobRestant[i] = getJobRestant(input, test);
+    }
+
+    int minJobRestant = INT8_MAX;
+    for (int i = 0; i < tailleTemp2; ++i) {
+        if (tabMinJobRestant[i] < minJobRestant) {
+            minJobRestant = tabMinJobRestant[i];
+        }
+    }
+    for (int i = 0; i < tailleTemp2; ++i) {
+        if (tabMinJobRestant[i] == minJobRestant) {
+            res = *temp2[0];
+            free(temp);
+            free(temp2);
+            return res;
+        }
+    }
+}
+
 sol_u *minimizing_Cmax(task **input) {
     for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) {
         printTask(input[i]);
