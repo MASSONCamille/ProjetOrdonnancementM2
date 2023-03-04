@@ -16,21 +16,23 @@ int cmp(const void *a, const void *b) {
 int getCmax(task **tasklist, task *taskToAdd) {
     int startdate = 0;
     int nbMachine = taskToAdd->machine_number;
-    int nbJob = taskToAdd->job;
+
     for (int j = 0; j < TASKS_PER_JOB * JOBS; j++) {
         if (tasklist[j]->machine_number == nbMachine) {
             if (tasklist[j]->start_date != INT8_MAX) {
-                if (tasklist[j]->start_date > startdate) {
-                    startdate = tasklist[j]->start_date;
+                if ((tasklist[j]->start_date + tasklist[j]->length) > startdate) {
+                    startdate = tasklist[j]->start_date + tasklist[j]->length;
                 }
             }
         }
     }
+
+    int nbJob = taskToAdd->job;
     for (int j = 0; j < TASKS_PER_JOB * JOBS; j++) {
         if (tasklist[j]->job == nbJob) {
             if (tasklist[j]->start_date != INT8_MAX) {
-                if (tasklist[j]->start_date + tasklist[j]->length > startdate) {
-                    startdate = tasklist[j]->start_date;
+                if ((tasklist[j]->start_date + tasklist[j]->length) > startdate) {
+                    startdate = tasklist[j]->start_date + tasklist[j]->length;
                 }
             }
         }
