@@ -25,52 +25,67 @@ void quicksort(uint8_t* number, uint8_t first, uint8_t last) {
     }
 }
 
-sortableTask **lslTaskTolstST(task **lsttask, int size_lst) {
-    sortableTask** lstres = (sortableTask**)calloc(size_lst, sizeof(sortableTask*));
-    if (lstres == NULL)
-        return NULL;
-    for (uint8_t i = 0; i < size_lst; i++) {
-        lstres[i] = (sortableTask*)calloc(1, sizeof(sortableTask));
-        if (lstres[i] == NULL)
-            return NULL;
-    }
+int cmp (const void *a, const void *b)
+{
+    uint8_t *x = *(uint8_t **)a;
+    uint8_t *y = *(uint8_t **)b;
 
-    for (int i = 0; i < size_lst; ++i) {
-        lstres[i]->t = lsttask[i];
-        lstres[i]->sortValue = lsttask[i]->length;
-    }
-
-    return lstres;
+    return x[0] - y[0];
 }
 
-task **lstSTTolslTask(sortableTask **lsttask, int size_lst) {
-    return NULL;
-}
-
-void taskQS(sortableTask** lsttsask, uint8_t first, uint8_t last){
-    uint8_t i, j, pivot;
-    sortableTask temp;
-    if (first < last) {
-        pivot = first;
-        i = first;
-        j = last;
-        while (i < j) {
-            while (lsttsask[i]->sortValue <= lsttsask[pivot]->sortValue && i < last)
-                i++;
-            while (lsttsask[j]->sortValue > lsttsask[pivot]->sortValue)
-                j--;
-            if (i < j) {
-                temp = *lsttsask[i];
-                lsttsask[i] = lsttsask[j];
-                lsttsask[j] = temp;
-            }
+void taskQS(task** tasklist, size_t taille){
+    uint8_t** a = (uint8_t**)malloc(taille * sizeof(uint8_t *));
+    if (a == NULL){
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (int i = 0; i < taille; ++i) {
+        a[i] = (uint8_t*)malloc(2* sizeof(uint8_t));
+        if (a[i] == NULL){
+            fprintf(stderr, "Out of memory");
+            exit(0);
         }
-        temp = *lsttsask[pivot];
-        lsttsask[pivot] = lsttsask[j];
-        lsttsask[j] = temp;
-        quicksort(lsttsask, first, j - 1);
-        quicksort(lsttsask, j + 1, last);
     }
+    for (int i = 0; i < taille; ++i) {
+        a[i][0] = tasklist[i]->length;
+        a[i][1] = i;
+    }
+
+    /*for (int r = 0; r < (taille); r++)
+    {
+        for (int c = 0; c < 2; c++) {
+            printf("%d ", a[r][c]);
+        }
+        printf("\n");
+    }
+    printf("\n");*/
+
+    qsort (a, taille, sizeof *a, cmp);   /* qsort array of pointers */
+
+    /*for (int r = 0; r < (taille); r++)
+    {
+        for (int c = 0; c < 2; c++) {
+            printf("%d ", a[r][c]);
+        }
+        printf("\n");
+    }
+    printf("\n");*/
+
+    task** buffer = (task**)calloc(taille, sizeof(task*));
+    for (uint8_t i = 0; i < taille; i++) {
+        buffer[i] = tasklist[i];
+    }
+
+    for (uint8_t i = 0; i < taille; i++) {
+        tasklist[i] = buffer[ a[i][1] ];
+    }
+
+    for (int i = 0; i < taille; i++) {
+        free(a[i]);
+    }
+    free(a);
+    free(buffer);
+
 }
 
 int8_t addTaskToSolU(sol_u* sol, task* t) {
