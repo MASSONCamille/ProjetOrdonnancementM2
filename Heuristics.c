@@ -4,6 +4,7 @@
 #include <string.h>
 #include "Heuristics.h"
 #include "Tools.h"
+#include "fifo.h"
 
 //convention: *input is an array of tasks sorted on jobs
 sol_u *jobs_increasing_time(task **input) {
@@ -55,11 +56,93 @@ sol_u *jobs_increasing_time(task **input) {
     return sol;
 }
 
-sol_u *FIFO(task *input) {
-    return NULL;
+sol_u* FIFO(task** input) {
+    sol_u *sol = allocateNewSolU();
+    tlist *listTasks = consVide();
+    for (int i = 0; i < TASKS_PER_JOB * JOBS; i++) { //permet d'ajouter les taches dans la liste
+        listTasks = cons(listTasks, input[i]);
+        addTaskToSolU(sol, extract(listTasks));
+    }
+    return sol;
+}
+// Minimum Cmax -> Minimum JobRestant -> Minimum PJ -> Hasard
+task getTaskH4(task **input){
+    task res; // instance de retour
+
+    task **temp0 = (task **) calloc(JOBS * TASKS_PER_JOB, sizeof(task *));
+    if (temp0 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+        temp0[i] = (task *) calloc(1, sizeof(task));
+        if (temp0[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp0 = 0;
+//
+    uint8_t *tabMinCmax = (uint8_t *) calloc(JOBS * TASKS_PER_JOB, sizeof(uint8_t));
+    for (int i = 0; i < JOBS * TASKS_PER_JOB; ++i) { // recup lst Cmax
+        if(input[i]->start_date == INT8_MAX){
+            task *test = input[i];
+            tabMinCmax[tailleTemp0] = getCmax(input, test);
+            temp0[tailleTemp0] = input[i];
+            tailleTemp0++;
+        }
+    }
+//
+    int minCmax = INT8_MAX;
+    for (int i = 0; i < tailleTemp0; ++i) { // recup du min Cmax (val)
+        if (tabMinCmax[i] < minCmax){
+            minCmax = tabMinCmax[i];
+        }
+    }
+//
+//    printf("valeur CMAX: ");
+//    for (int i = 0; i < JOBS*TASKS_PER_JOB; ++i){
+//        printf("%d ",tabMinCmax[i]);
+//    }
+//    printf("\nmin(CMAX) --> %d\n",minCmax);
+//
+//    for (int i = 0; i < JOBS*TASKS_PER_JOB; ++i) {
+//        printTask(input[i]);
+//        printf("|\n");
+//    }
+//
+//    //Un Cmax op mini
+    if (tailleTemp0 == 1) {
+        printf("return lv1\n|\n");
+        res = *temp0[0];
+        free(temp0);
+        return res;
+    }
+//
+//    uint8_t *tabMinJobRestant = (uint8_t *) calloc(tailleTemp0, sizeof(uint8_t));
+//    for (int i = 0; i < tailleTemp0; ++i) { // recup lst Job Restant
+//        task *test = temp0[i];
+//        tabMinJobRestant[i] = getJobRestant(input, test);
+//    }
+//
+//    int minJobRestant = INT8_MAX;
+//    for (int i = 0; i < tailleTemp0; ++i) { // recup min Job Restant (val)
+//        if (tabMinJobRestant[i] < minJobRestant) {
+//            minJobRestant = tabMinJobRestant[i];
+//        }
+//    }
+//    for (int i = 0; i < tailleTemp0; ++i) { // recup le 1er parmi tous les Job Restant min
+//        if (tabMinJobRestant[i] == minJobRestant) {
+//            res = *temp0[0];
+//            free(temp0);
+//            printf("return lv4\n|\n");
+//            return res;
+//        }
+//    }
 }
 
-task getTaskMinimizing_Cmax(task **input) { // warning "input" most be short
+// Minimum PJ -> Minimum Cmax -> Minimum JobRestant -> Hasard
+task getTaskH3(task **input) { // warning "input" most be short
     task res; // instance de retour
 
     // -------------------------
@@ -236,7 +319,7 @@ sol_u *minimizing_Cmax(task **input) {
 
     int inc = 0;
     while (nbTachePasPlacee(input) != 0) {
-        task buffer = getTaskMinimizing_Cmax(input);
+        task buffer = getTaskH3(input);
         printTask(&buffer);
         printf("|\n");
         for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) {
