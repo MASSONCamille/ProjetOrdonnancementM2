@@ -12,6 +12,24 @@
 
 void taskQS(task** tasklist, size_t taille);
 
+uint8_t getCmax(task **tasklist, task *taskToAdd);
+
+uint8_t getJobRestant(task **tasklist, task *taskToAdd);
+
+uint8_t nbTachePasPlacee(task **tasklist);
+
+uint8_t getResultCmax(task **taskList);
+
+task getTaskH3(task **input);
+
+task getTaskH4(task **input);
+
+task** cloneListTask(task** taskList);
+
+sol_u* lstTaskToSolu(task** taskList);
+
+void printLstTask(task** taskList);
+
 int8_t addTaskToSolU(sol_u* sol, task* t);
 
 sol_u* allocateNewSolU(void);

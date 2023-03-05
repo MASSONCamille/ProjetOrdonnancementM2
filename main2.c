@@ -4,16 +4,18 @@
 #include "Task.h"
 #include "Tools.h"
 #include "Heuristics.h"
-
+#include "fifo.h"
 
 int main(void) {
-    task** data = generateTasksBis();
-
-    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
-        printTask(data[i]);
-        printf("\n");
-    }
-    printf("fin generation\n\n");
+//    task **data = generateTasksBis();
+//    sol_u *test = allocateNewSolU();
+//    test = minimizing_Cmax(data);
+//
+//    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
+//        printTask(data[i]);
+//        printf("\n");
+//    }
+//    printf("fin generation\n\n");
 
     /*uint8_t** a = (uint8_t**)malloc((TASKS_PER_JOB*JOBS) * sizeof(uint8_t *));
     if (a == NULL){
@@ -63,14 +65,43 @@ int main(void) {
     }
     free(a);*/
 
-    taskQS(data, TASKS_PER_JOB*JOBS);
+//    taskQS(data, TASKS_PER_JOB*JOBS);
+//
+//    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
+//        printTask(data[i]);
+//        printf("\n");
+//    }
 
-    for (int i = 0; i < TASKS_PER_JOB*JOBS; ++i) {
-        printTask(data[i]);
-        printf("\n");
-    }
+    #ifdef _WIN32
+        _CrtMemState s1, s2, s3;
+        _CrtMemCheckpoint(&s1);
+        _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+    #endif
+        printf("Job , Start , Length , Machine: \n ");
 
+        task **data = generateTasks();
+        sol_u *test = allocateNewSolU();
+        task **data1 = generateTasks();
+        sol_u *test1 = allocateNewSolU();
 
+        printf("la premiere heuristique :jobs_increasing_time \n");
+
+        test = jobs_increasing_time(data);
+        test1 = FIFO(data1);
+
+        printSolutionU(test);
+
+        printf("la deuxieme heuristique:fifo \n");
+        printSolutionU(test1);
+
+        freeAll(test, data);
+        freeAll(test1, data1);
+
+    #ifdef _WIN32
+        _CrtMemCheckpoint(&s2);
+        if (_CrtMemDifference(&s3, &s1, &s2))
+            _CrtMemDumpStatistics(&s3);
+    #endif
 
     return 0;
 }
