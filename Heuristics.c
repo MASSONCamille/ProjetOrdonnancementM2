@@ -66,25 +66,10 @@ sol_u* FIFO(task** input) {
     return sol;
 }
 
-sol_u *minimizing_Cmax(task **input) {
-    /*for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) { // print all task
-        printTask(input[i]);
-        printf("\n");
-    }*/
-    printf("fin generation\n\n");
-
-    taskQS(input, TASKS_PER_JOB * JOBS);
-    /*for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) { // print all task
-        printTask(input[i]);
-        printf("\n");
-    }*/
-    printf("fin trie\nreste %d task\n\n", nbTachePasPlacee(input));
-
+sol_u *increasing_task_length(task **input) {
     int inc = 0;
     while (nbTachePasPlacee(input) != 0) {
         task buffer = getTaskH3(input);
-        printTask(&buffer);
-        printf("|\n");
         for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) {
             if((buffer.job == input[i]->job) && (buffer.machine_number == input[i]->machine_number)){
                 input[i]->start_date = getCmax(input, &buffer)-buffer.length;
@@ -100,6 +85,21 @@ sol_u *minimizing_Cmax(task **input) {
     return lstTaskToSolu(input);
 }
 
-sol_u *increasing_task_length(task *input) {
-    return NULL;
+sol_u *minimizing_Cmax(task **input) {
+    int inc = 0;
+    while (nbTachePasPlacee(input) != 0) {
+        task buffer = getTaskH4(input);
+        for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) {
+            if((buffer.job == input[i]->job) && (buffer.machine_number == input[i]->machine_number)){
+                input[i]->start_date = getCmax(input, &buffer)-buffer.length;
+            }
+        }
+        inc++;
+        if (inc > 12){
+            fprintf(stderr, "trop d'iteration");
+            return NULL;
+        }
+    }
+
+    return lstTaskToSolu(input);
 }

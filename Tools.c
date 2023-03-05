@@ -450,25 +450,7 @@ void taskQS(task **tasklist, size_t taille) {
         a[i][1] = i;
     }
 
-    /*for (int r = 0; r < (taille); r++)
-    {
-        for (int c = 0; c < 2; c++) {
-            printf("%d ", a[r][c]);
-        }
-        printf("\n");
-    }
-    printf("\n");*/
-
     qsort(a, taille, sizeof *a, cmp);   /* qsort array of pointers */
-
-    /*for (int r = 0; r < (taille); r++)
-    {
-        for (int c = 0; c < 2; c++) {
-            printf("%d ", a[r][c]);
-        }
-        printf("\n");
-    }
-    printf("\n");*/
 
     task **buffer = (task **) calloc(taille, sizeof(task *));
     for (uint8_t i = 0; i < taille; i++) {
@@ -484,7 +466,6 @@ void taskQS(task **tasklist, size_t taille) {
     }
     free(a);
     free(buffer);
-
 }
 
 int8_t addTaskToSolU(sol_u *sol, task *t) {
@@ -541,33 +522,40 @@ int8_t addTaskToSolU(sol_u *sol, task *t) {
     return 1;
 }
 
-sol_u *allocateNewSolU(void) {
-    sol_u *sol = (sol_u *) calloc(1, sizeof(sol_u));
-    if (sol == NULL) {
+sol_u* allocateNewSolU(void)
+{
+    sol_u* sol = (sol_u*)calloc(1,sizeof(sol_u));
+    if (sol == NULL)
+    {
         return NULL;
     }
 
-    sol->machine_list = (machine **) calloc(TASKS_PER_JOB, sizeof(machine *));
+    sol->machine_list = (machine**)calloc(TASKS_PER_JOB, sizeof(machine*));
 
-    if (sol->machine_list == NULL) {
+    if (sol->machine_list == NULL)
+    {
+        return NULL;
+    }
+    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    {
+        sol->machine_list[i] = (machine*)calloc(1, sizeof(machine));
+    }
+
+    if (sol->machine_list == NULL)
+    {
         return NULL;
     }
     for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
-        sol->machine_list[i] = (machine *) calloc(1, sizeof(machine));
-    }
-
-    if (sol->machine_list == NULL) {
-        return NULL;
-    }
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
-        if (sol->machine_list[i] == NULL) {
+        if (sol->machine_list[i] == NULL)
+        {
             return NULL;
         }
-        sol->machine_list[i]->task_list = (task **) calloc(JOBS, sizeof(task *));
-        for (uint8_t j = 0; j < JOBS; j++) {
+        sol->machine_list[i]->task_list = (task**)calloc(JOBS, sizeof(task*));
+        for (uint8_t j = 0; j < JOBS; j++)
+        {
             if (sol->machine_list[i]->task_list == NULL)
                 return NULL;
-            sol->machine_list[i]->task_list[j] = (task *) calloc(1, sizeof(task));
+            sol->machine_list[i]->task_list[j] = (task*)calloc(1, sizeof(task));
             if (sol->machine_list[i]->task_list[j] == NULL)
                 return NULL;
             sol->machine_list[i]->task_list[j]->start_date = INT8_MAX;
@@ -612,14 +600,17 @@ void *freeAll(sol_u *sol, task **tasks) {
     return NULL;
 }
 
-int8_t printSolutionU(sol_u *sol) {
+int8_t printSolutionU(sol_u* sol) {
     if (sol == NULL)
         return -1;
 
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
-        for (uint8_t j = 0; j < JOBS; j++) {
+    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    {
+        for (uint8_t j = 0; j < JOBS; j++)
+        {
             if (printTask(sol->machine_list[i]->task_list[j]) == -1)
                 return -1;
+            else printf("\n");
         }
     }
 
@@ -633,4 +624,47 @@ uint8_t searchArrayForIndex(uint8_t *arr, uint8_t size, uint8_t val) {
     }
 
     return UINT8_MAX;
+}
+
+void dumpSolutionUToFile(sol_u* sol)
+{
+    FILE* f = fopen("dump", "w");
+    if (f == NULL)
+        exit(1);
+    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    {
+
+        for (uint8_t j = 0; j < JOBS; j++)
+        {
+            int length = 0;
+            char* str;
+            task* aux = sol->machine_list[i]->task_list[j];
+            fputs("\nNEW TASK\n", f);
+            fputs("JOB: ", f);
+            length = snprintf(NULL, 0, "%d", aux->job);
+            str = malloc(length + 1);
+            snprintf(str, length + 1, "%d", aux->job);
+            fputs(str, f);
+            fputs("\nMACHINE: ", f);
+            free(str);
+            length = snprintf(NULL, 0, "%d", aux->machine_number);
+            str = malloc(length + 1);
+            snprintf(str, length + 1, "%d", aux->machine_number);
+            fputs(str, f);
+            fputs("\nSTART DATE :", f);
+            free(str);
+            length = snprintf(NULL, 0, "%d", aux->start_date);
+            str = malloc(length + 1);
+            snprintf(str, length + 1, "%d", aux->start_date);
+            fputs(str, f);
+            fputs("\nLENGTH: ", f);
+            free(str);
+            length = snprintf(NULL, 0, "%d", aux->length);
+            str = malloc(length + 1);
+            snprintf(str, length + 1, "%d", aux->length);
+            fputs(str, f);
+            free(str);
+        }
+    }
+    fclose(f);
 }
