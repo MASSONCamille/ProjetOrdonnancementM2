@@ -12,8 +12,379 @@ int cmp(const void *a, const void *b) {
     return x[0] - y[0];
 }
 
-//TODO : Changer en Uint8
-int getCmax(task **tasklist, task *taskToAdd) {
+// Minimum PJ -> Minimum Cmax -> Minimum JobRestant -> Hasard
+task getTaskH3(task **input) { // warning "input" most be short
+    task res; // instance de retour
+
+    // -------------------------
+    // --- Test Start is max ---
+
+    task **temp0 = (task **) calloc(JOBS * TASKS_PER_JOB, sizeof(task *));
+    if (temp0 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+        temp0[i] = (task *) calloc(1, sizeof(task));
+        if (temp0[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp0 = 0;
+
+    for (int i = 0; i < JOBS * TASKS_PER_JOB; ++i) { // recup tache non placé
+        if (input[i]->start_date == INT8_MAX) {
+            temp0[tailleTemp0] = input[i];
+            tailleTemp0++;
+        }
+    }
+
+    //Dernière tache
+    if (tailleTemp0 == 1) {
+        res = *temp0[0];
+        free(temp0);
+        return res;
+    }
+
+    // -----------------------
+    // --- Test Min Length ---
+
+    int minLength = INT8_MAX;
+    for (int i = 0; i < tailleTemp0; ++i) { // recup du min Length (val)
+        if (temp0[i]->length < minLength) {
+            minLength = temp0[i]->length;
+        }
+    }
+
+    task **temp1 = (task **) calloc(tailleTemp0, sizeof(task *));
+    if (temp1 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < tailleTemp0; i++) {
+        temp1[i] = (task *) calloc(1, sizeof(task));
+        if (temp1[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp1 = 0;
+
+    for (int i = 0; i < tailleTemp0; ++i) { // recup de tous les Length min
+        if (temp0[i]->length == minLength) {
+            temp1[tailleTemp1] = temp0[i];
+            tailleTemp1++;
+        }
+    }
+
+    //Une durée op mini
+    if (tailleTemp1 == 1) {
+        res = *temp1[0];
+        free(temp0);
+        free(temp1);
+        return res;
+    }
+
+    // ---------------------
+    // --- Test Min Cmax ---
+
+    uint8_t *tabMinCmax = (uint8_t *) calloc(tailleTemp1, sizeof(uint8_t));
+    for (int i = 0; i < tailleTemp1; ++i) { // recup lst Cmax
+        task *test = temp1[i];
+        tabMinCmax[i] = getCmax(input, test);
+    }
+
+    int minCmax = INT8_MAX;
+    for (int i = 0; i < tailleTemp1; ++i) { // recup du min Cmax (val)
+        if (tabMinCmax[i] < minCmax){
+            minCmax = tabMinCmax[i];
+        }
+    }
+
+    task **temp2 = (task **) calloc(tailleTemp1, sizeof(task *));
+    if (temp2 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < tailleTemp1; i++) {
+        temp2[i] = (task *) calloc(1, sizeof(task));
+        if (temp2[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp2 = 0;
+
+    for (int i = 0; i < tailleTemp1; ++i) { // recup de tous les Cmax min
+        if (tabMinCmax[i] == minCmax) {
+            temp2[tailleTemp2] = temp1[i];
+            tailleTemp2++;
+        }
+    }
+
+    //Un Cmax mini
+    if (tailleTemp2 == 1) {
+        res = *temp2[0];
+        free(temp0);
+        free(temp1);
+        free(temp2);
+        return res;
+    }
+
+    // ----------------------------
+    // --- Test Min Job Restant ---
+
+    uint8_t *tabMinJobRestant = (uint8_t *) calloc(tailleTemp2, sizeof(uint8_t));
+    for (int i = 0; i < tailleTemp2; ++i) { // recup lst Job Restant
+        task *test = temp2[i];
+        tabMinJobRestant[i] = getJobRestant(input, test);
+    }
+
+    int minJobRestant = INT8_MAX;
+    for (int i = 0; i < tailleTemp2; ++i) { // recup min Job Restant (val)
+        if (tabMinJobRestant[i] < minJobRestant) {
+            minJobRestant = tabMinJobRestant[i];
+        }
+    }
+    for (int i = 0; i < tailleTemp2; ++i) { // recup le 1er parmi tous les Job Restant min
+        if (tabMinJobRestant[i] == minJobRestant) {
+            res = *temp2[0];
+            free(temp0);
+            free(temp1);
+            free(temp2);
+            return res;
+        }
+    }
+}
+
+// Minimum Cmax -> Minimum JobRestant -> Minimum PJ -> Hasard
+task getTaskH4(task **input){
+    task res; // instance de retour
+
+    // -------------------------
+    // --- Test Start is max ---
+
+    task **temp0 = (task **) calloc(JOBS * TASKS_PER_JOB, sizeof(task *));
+    if (temp0 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+        temp0[i] = (task *) calloc(1, sizeof(task));
+        if (temp0[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp0 = 0;
+
+    for (int i = 0; i < JOBS * TASKS_PER_JOB; ++i) { // recup de tous les non placées
+        if (input[i]->start_date == INT8_MAX) {
+            temp0[tailleTemp0] = input[i];
+            tailleTemp0++;
+        }
+    }
+
+    //Dernière tache
+    if (tailleTemp0 == 1) {
+        res = *temp0[0];
+        free(temp0);
+        return res;
+    }
+
+    // ---------------------
+    // --- Test Min Cmax ---
+
+    uint8_t *tabMinCmax = (uint8_t *) calloc(tailleTemp0, sizeof(uint8_t));
+    for (int i = 0; i < tailleTemp0; ++i) { // recup lst Cmax
+        task *test = temp0[i];
+        tabMinCmax[i] = getCmax(input, test);
+    }
+
+    int minCmax = INT8_MAX;
+    for (int i = 0; i < tailleTemp0; ++i) { // recup du min Cmax (val)
+        if (tabMinCmax[i] < minCmax){
+            minCmax = tabMinCmax[i];
+        }
+    }
+
+    task **temp1 = (task **) calloc(tailleTemp0, sizeof(task *));
+    if (temp1 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < tailleTemp0; i++) {
+        temp1[i] = (task *) calloc(1, sizeof(task));
+        if (temp1[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp1 = 0;
+
+    for (int i = 0; i < tailleTemp0; ++i) { // recup de tous les Cmax min
+        if (tabMinCmax[i] == minCmax) {
+            temp1[tailleTemp1] = temp0[i];
+            tailleTemp1++;
+        }
+    }
+
+    //Un Cmax mini
+    if (tailleTemp1 == 1) {
+        res = *temp1[0];
+        free(temp0);
+        free(temp1);
+        return res;
+    }
+
+    // ----------------------------
+    // --- Test Min Job Restant ---
+
+    uint8_t *tabMinJobRestant = (uint8_t *) calloc(tailleTemp1, sizeof(uint8_t));
+    for (int i = 0; i < tailleTemp1; ++i) { // recup lst Job Restant
+        task *test = temp1[i];
+        tabMinJobRestant[i] = getJobRestant(input, test);
+    }
+
+    int minJobRestant = INT8_MAX;
+    for (int i = 0; i < tailleTemp1; ++i) { // recup min Job Restant (val)
+        if (tabMinJobRestant[i] < minJobRestant) {
+            minJobRestant = tabMinJobRestant[i];
+        }
+    }
+
+    task **temp2 = (task **) calloc(tailleTemp1, sizeof(task *));
+    if (temp2 == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+    }
+    for (uint8_t i = 0; i < tailleTemp1; i++) {
+        temp2[i] = (task *) calloc(1, sizeof(task));
+        if (temp2[i] == NULL) {
+            fprintf(stderr, "Out of memory");
+            exit(0);
+        }
+    }
+    int tailleTemp2 = 0;
+
+    for (int i = 0; i < tailleTemp1; ++i) { // recup de tous les jobs restant min
+        if (tabMinJobRestant[i] == minJobRestant) {
+            temp2[tailleTemp2] = temp1[i];
+            tailleTemp2++;
+        }
+    }
+
+    //Un jobRestant mini
+    if (tailleTemp2 == 1) {
+        res = *temp2[0];
+        free(temp0);
+        free(temp1);
+        free(temp2);
+        return res;
+    }
+
+    // -----------------------
+    // --- Test Min Length ---
+
+    int minLength = INT8_MAX;
+    for (int i = 0; i < tailleTemp2; ++i) { // recup du min Length (val)
+        if (temp2[i]->length < minLength) {
+            minLength = temp2[i]->length;
+        }
+    }
+
+    for (int i = 0; i < tailleTemp2; ++i) {
+        if(temp2[i]->length == minLength){
+            res = *temp2[i];
+            free(temp0);
+            free(temp1);
+            free(temp2);
+            return res;
+        }
+    }
+}
+
+task** cloneListTask(task** taskList){
+    task** dcopy=(task**)calloc(JOBS * TASKS_PER_JOB,sizeof(task*));
+    if (dcopy == NULL)
+        return NULL;
+
+    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++)
+    {
+        task* t = (task*)calloc(1, sizeof(task));
+        if (t == NULL)
+            return NULL;
+        t->job = taskList[i]->job;
+        t->length = taskList[i]->length;
+        t->machine_number = taskList[i]->machine_number;
+        t->start_date = taskList[i]->start_date;
+        dcopy[i] = t;
+    }
+    return dcopy;
+}
+
+sol_u* lstTaskToSolu(task** taskList){
+    int verifend = nbTachePasPlacee(taskList);
+    if (verifend > 0){
+        fprintf(stderr, "%d no-ended task",verifend);
+        return NULL;
+    }
+
+    sol_u *solres = allocateNewSolU();
+
+    for (int iterMachine = 0; iterMachine < TASKS_PER_JOB; ++iterMachine) { // iterMachine -> num machine a check
+        int taskInCurrentMachine = 0;
+        for (int iterTask = 0; iterTask < TASKS_PER_JOB*JOBS; ++iterTask) {
+            if (taskList[iterTask]->machine_number == iterMachine){
+                solres->machine_list[iterMachine]->task_list[taskInCurrentMachine]->machine_number =
+                        taskList[iterTask]->machine_number;
+                solres->machine_list[iterMachine]->task_list[taskInCurrentMachine]->job =
+                        taskList[iterTask]->job;
+                solres->machine_list[iterMachine]->task_list[taskInCurrentMachine]->length =
+                        taskList[iterTask]->length;
+                solres->machine_list[iterMachine]->task_list[taskInCurrentMachine]->start_date =
+                        taskList[iterTask]->start_date;
+                taskInCurrentMachine++;
+            }
+        }
+    }
+
+    return solres;
+}
+
+void printLstTask(task** taskList){
+    for (int i = 0; i < JOBS * TASKS_PER_JOB; ++i) { // print all task
+        printTask(taskList[i]);
+        printf("\n");
+    }
+
+    int taskreste = nbTachePasPlacee(taskList);
+    if(taskreste <=0 ){
+        printf("Resultat: %d\n",getResultCmax(taskList));
+    } else {
+        printf("Il reste %d a placer\n",taskreste);
+    }
+}
+
+uint8_t getResultCmax(task **taskList){
+    int numJob;
+    int cMax;
+    int result = 0;
+    for (int i = 0; i < JOBS; ++i) {
+        numJob = i;
+        cMax = 0;
+        for (int j = 0; j < JOBS * TASKS_PER_JOB; ++j) {
+            if((taskList[j]->job == numJob) && ((taskList[j]->start_date + taskList[j]->length) > cMax)){
+               cMax = taskList[j]->start_date + taskList[j]->length;
+            }
+        }
+        result += cMax;
+    }
+    return result;
+}
+
+uint8_t getCmax(task **tasklist, task *taskToAdd) {
     int startdate = 0;
     int nbMachine = taskToAdd->machine_number;
 
@@ -40,7 +411,7 @@ int getCmax(task **tasklist, task *taskToAdd) {
     return (startdate+taskToAdd->length);
 }
 
-int nbTachePasPlacee(task **tasklist){
+uint8_t nbTachePasPlacee(task **tasklist){
     int nbTache = 0;
     for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) {
         if(tasklist[i]->start_date == INT8_MAX){
@@ -50,7 +421,7 @@ int nbTachePasPlacee(task **tasklist){
     return nbTache;
 }
 
-int getJobRestant(task **tasklist, task *taskToAdd){
+uint8_t getJobRestant(task **tasklist, task *taskToAdd){
     int lenJobRestant = 0;
     int numJob = taskToAdd->job;
     for (int i = 0; i < JOBS*TASKS_PER_JOB; ++i) {
