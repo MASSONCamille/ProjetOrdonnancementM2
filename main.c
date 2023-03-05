@@ -14,6 +14,7 @@ int main(void) {
     task **data = generateTasksBis();
     sol_u *test = allocateNewSolU();
 
+
     printf("\n---------------------\nincreasing_task_length\n\n");
     task **input = cloneListTask(data);
     test = increasing_task_length(input);
@@ -44,12 +45,20 @@ int main(void) {
 
     freeAll(test, data);
 
-#ifdef _WIN32
-    _CrtMemCheckpoint(&s2);
-    if (_CrtMemDifference(&s3, &s1, &s2))
-        _CrtMemDumpStatistics(&s3);
-#endif
+	//printSolutionU(test);
+	dumpSolutionUToFile(test);
+
+	//freeAll(test, data);
+	freeTasks(data);
+	freeSolU(test);
+
+	#ifdef _WIN32
+	_CrtMemCheckpoint(&s2);
+	if (_CrtMemDifference(&s3, &s1, &s2))
+		_CrtMemDumpStatistics(&s3);
+	#endif
 
 
+	printf("\nFIN");
 	return 0;
 }

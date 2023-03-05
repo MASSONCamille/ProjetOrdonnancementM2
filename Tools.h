@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
+#include <string.h>
 #include "task.h"
 
 void taskQS(task** tasklist, size_t taille);
