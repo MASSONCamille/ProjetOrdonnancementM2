@@ -250,24 +250,48 @@ void dumpSolutionUToFile(sol_u* sol)
 			fputs("JOB: ", f);
 			length = snprintf(NULL, 0, "%d", aux->job);
 			str = malloc(length + 1);
+			if (str == NULL)
+			{
+				printf("DUMP FAILURE"); 
+				exit(-1);
+			}
+				
 			snprintf(str, length + 1, "%d", aux->job);
 			fputs(str, f);
 			fputs("\nMACHINE: ", f);
 			free(str);
 			length = snprintf(NULL, 0, "%d", aux->machine_number);
 			str = malloc(length + 1);
+			if (str == NULL)
+			{
+				printf("DUMP FAILURE");
+				exit(-1);
+			}
+
 			snprintf(str, length + 1, "%d", aux->machine_number);
 			fputs(str, f);
 			fputs("\nSTART DATE :", f);
 			free(str);
 			length = snprintf(NULL, 0, "%d", aux->start_date);
 			str = malloc(length + 1);
+			if (str == NULL)
+			{
+				printf("DUMP FAILURE");
+				exit(-1);
+			}
+
 			snprintf(str, length + 1, "%d", aux->start_date);
 			fputs(str, f);
 			fputs("\nLENGTH: ", f);
 			free(str);
 			length = snprintf(NULL, 0, "%d", aux->length);
 			str = malloc(length + 1);
+			if (str == NULL)
+			{
+				printf("DUMP FAILURE");
+				exit(-1);
+			}
+
 			snprintf(str, length + 1, "%d", aux->length);
 			fputs(str, f);
 			free(str);

@@ -15,10 +15,13 @@ int main(void) {
 
 	test = jobs_increasing_time(data);
 
-	printSolutionU(test);
+	//printSolutionU(test);
 	dumpSolutionUToFile(test);
 
-	freeAll(test, data);
+	//freeAll(test, data);
+	freeTasks(data);
+	freeSolU(test);
+
 	#ifdef _WIN32
 	_CrtMemCheckpoint(&s2);
 	if (_CrtMemDifference(&s3, &s1, &s2))
