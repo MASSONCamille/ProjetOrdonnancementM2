@@ -43,8 +43,6 @@ int main(void) {
     printSolutionU(test);
     printf("Resultat: %d\n", getResultCmax(input));
 
-    freeAll(test, data);
-
 	//printSolutionU(test);
 	dumpSolutionUToFile(test);
 

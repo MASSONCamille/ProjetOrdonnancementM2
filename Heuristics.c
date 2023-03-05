@@ -13,22 +13,6 @@ sol_u *jobs_increasing_time(task **input) {
         uint8_t *num;
     } a;
 
-	task** dcopy=(task**)calloc(JOBS * TASKS_PER_JOB,sizeof(task*));
-	if (dcopy == NULL)
-		return NULL;
-
-	for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++)
-	{
-		task* t = (task*)calloc(1, sizeof(task));
-		if (t == NULL)
-			return NULL;
-		t->job = input[i]->job;
-		t->length = input[i]->length;
-		t->machine_number = input[i]->machine_number;
-		t->start_date = input[i]->start_date;
-		dcopy[i] = t;
-	}
-
 	a* jobs = (a*)calloc(1, sizeof(a));
 	jobs->arr = (uint8_t*)calloc(JOBS, sizeof(uint8_t));
 	jobs->num = (uint8_t*)calloc(JOBS, sizeof(uint8_t));
@@ -39,7 +23,7 @@ sol_u *jobs_increasing_time(task **input) {
 
 	for (uint8_t i = 0; i < TASKS_PER_JOB * JOBS; i++) {
 		if (jobs->arr != NULL){
-			jobs->arr[dcopy[i]->job - 1] += dcopy[i]->length;
+			jobs->arr[input[i]->job - 1] += input[i]->length;
 		}
 		else
 		{
@@ -60,8 +44,8 @@ sol_u *jobs_increasing_time(task **input) {
 	for (int i = 0; i < JOBS; i++) {
 		uint8_t aux = searchArrayForIndex(jobs->arr, JOBS, sorted_jobs[i]);
 		for (uint8_t j = 0; j < JOBS * TASKS_PER_JOB; j++) {
-			if (dcopy[j]->job == aux)
-				addTaskToSolU(sol, dcopy[j]);
+			if (input[j]->job == aux)
+				addTaskToSolU(sol, input[j]);
 		}
 	}
 
