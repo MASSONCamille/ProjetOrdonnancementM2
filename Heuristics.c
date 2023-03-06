@@ -23,7 +23,7 @@ sol_u *jobs_increasing_time(task **input) {
 
 	for (uint8_t i = 0; i < TASKS_PER_JOB * JOBS; i++) {
 		if (jobs->arr != NULL){
-			jobs->arr[input[i]->job - 1] += input[i]->length;
+			jobs->arr[input[i]->job] += input[i]->length;
 		}
 		else
 		{
@@ -31,14 +31,32 @@ sol_u *jobs_increasing_time(task **input) {
 		}
 	}
 
+    for (uint8_t i = 0; i < JOBS; i++) {
+        printf("%d ", jobs->arr[i]);
+    }
+    printf("\n");
+
 	uint8_t* sorted_jobs=(uint8_t*)calloc(JOBS*TASKS_PER_JOB,sizeof(uint8_t));
 
-	if(memcpy(sorted_jobs, jobs->arr,JOBS*TASKS_PER_JOB) == NULL)
-		return NULL;
-	qsort(sorted_jobs, JOBS*TASKS_PER_JOB, sizeof(uint8_t), cmpInt);
+	//if(memcpy(sorted_jobs, jobs->arr,JOBS*TASKS_PER_JOB) == NULL)
+	//	return NULL;
+    for (int i = 0; i < JOBS * TASKS_PER_JOB; i++)
+    {
+        sorted_jobs[i] = jobs->arr[i];
+    }
+	qsort(sorted_jobs, JOBS, sizeof(uint8_t), cmpInt);
 
+
+    for (uint8_t i = 0; i < JOBS; i++) {
+        printf("%d ", jobs->arr[i]);
+    }
+    printf("\n");
+
+    for (uint8_t i = 0; i < JOBS; i++) {
+        printf("%d ", sorted_jobs[i]);
+    }
+    printf("\n");
     sol_u *sol = allocateNewSolU();
-    //wrong
 
 
 	for (int i = 0; i < JOBS; i++) {
@@ -51,6 +69,7 @@ sol_u *jobs_increasing_time(task **input) {
 
 
     free(sorted_jobs);
+    free(jobs->arr);
     free(jobs->num);
     free(jobs);
 
@@ -59,10 +78,8 @@ sol_u *jobs_increasing_time(task **input) {
 
 sol_u* FIFO(task** input) {
     sol_u *sol = allocateNewSolU();
-    tlist *listTasks = consVide();
     for (int i = 0; i < TASKS_PER_JOB * JOBS; i++) { //permet d'ajouter les taches dans la liste
-        listTasks = cons(listTasks, input[i]);
-        addTaskToSolU(sol, extract(listTasks));
+        addTaskToSolU(sol, input[i]);
     }
     return sol;
 }

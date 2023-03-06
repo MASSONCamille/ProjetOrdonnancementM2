@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include "Tools.h"
 
-int cmpInt(uint8_t a, uint8_t b) {
-    return a - b;
+int cmpInt(const void* a, const void* b) {
+    return (*(uint8_t*)a-*(uint8_t*)b);
 }
 
 int cmp(const void *a, const void *b) {
@@ -470,63 +470,67 @@ void taskQS(task **tasklist, size_t taille) {
 
 
 int8_t addTaskToSolU(sol_u* sol, task* t) {
-	uint8_t k = 0;
-	t->start_date = 0;
-	//printSolutionU(sol);
-	while (sol->machine_list[t->machine_number]->task_list[k] != NULL && sol->machine_list[t->machine_number]->task_list[k]->start_date != INT8_MAX && k<TASKS_PER_JOB)
-	{
-		k++;
-	}
-	//printf("%d %s\n", k,"fin boucle");
-	uint8_t b = 0;
+    int k = 0;
+    while (sol->machine_list[t->machine_number]->task_list[k]->length>0)
+    {
+        k++;
+    }
+    uint8_t* aux=(uint8_t*)calloc(6* TASKS_PER_JOB* JOBS, sizeof(uint8_t));
+    if (aux == NULL)
+        return -1;
+    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    {
+        for (uint8_t j = 0; j < JOBS; j++)
+        {//
+            // 
+            if (sol->machine_list[i]->task_list[j]->length>0 && (i==t->machine_number||j==t->job))
+            {
+                aux[sol->machine_list[i]->task_list[j]->start_date] = sol->machine_list[i]->task_list[j]->length;
+            }
+        }
+    }
 
-	for (uint8_t j = 0; j < TASKS_PER_JOB; j++)
-	{
-		for (uint8_t i = 0; i < JOBS; i++)
-		{
-			if (sol->machine_list[j]->task_list==NULL|| sol->machine_list[j]->task_list[i]==NULL)
-			{
-				return -1;
-			}
-			if (sol->machine_list[j]->task_list[i]->job == t->job)
-			{
-				if (b<t->start_date+t->length)
-				{
-					b = t->start_date + sol->machine_list[j]->task_list[i]->length;
-				}
-			}
-		}
-	}
 
-	for (uint8_t i = 0; i < JOBS - 1; i++)
-	{
-		if (sol->machine_list[t->machine_number]->task_list[i] == NULL)
-		{
-			return -1;
-		}
-		uint8_t start = sol->machine_list[t->machine_number]->task_list[i]->start_date + sol->machine_list[t->machine_number]->task_list[i]->length;
-		uint8_t end = UINT8_MAX;
-		if (sol->machine_list[t->machine_number]->task_list[i + 1]) {
-			end = sol->machine_list[t->machine_number]->task_list[i + 1]->start_date;
-		}
-		if (end - start >= t->length && start < b)
-		{
-			b = start;
-		}
-	}
 
-	uint8_t a = 0;
-	if (k != 0) {
-		if (sol->machine_list[t->machine_number]->task_list[k - 1])
-			a = sol->machine_list[t->machine_number]->task_list[k - 1]->start_date + sol->machine_list[t->machine_number]->task_list[k - 1]->length;
-		}
+    int num = 0;
+    int size = 0;
+    for (uint8_t i = 0; i < 6 * TASKS_PER_JOB * JOBS; i++)
+    {
 
-	uint8_t start_date = (a > b) ? a : b;
+        if (num > 0)
+        {
+            aux[i] = 1;
+            num--;
+        }
+        if (aux[i] > 1)
+        {
+            size = 0;
+            num = aux[i]-1;
+            aux[i] = 1;
+        }
+        else if(aux[i]==0)
+        {
+            size++;
+        }
 
-	t->start_date = start_date;
-	sol->machine_list[t->machine_number]->task_list[k] = t;
+        if (size == t->length)
+        {
+            t->start_date = (i-size)+1;
+            break;
+        }
 
-	return 1;
+    }
+    //for (uint8_t i = 0; i < 6 * TASKS_PER_JOB * JOBS; i++)
+    //{
+    //    printf("%d", aux[i]);
+    //}
+    //printf("\n");
+
+    sol->machine_list[t->machine_number]->task_list[k] = t;
+
+    free(aux);
+
+    return 1;
 }
 
 sol_u* allocateNewSolU(void)
@@ -620,7 +624,6 @@ int8_t printSolutionU(sol_u* sol) {
             else printf("\n");
         }
     }
-
     return 1;
 }
 
