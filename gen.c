@@ -26,16 +26,31 @@ task*** pop_creation(task** input, size_t size)
 	task*** out = (task***)calloc(size,sizeof(task**));
     if (out == NULL)
         return NULL;
-	for (uint8_t i = 0; i < size; i++)
+	for (uint32_t i = 0; i < size; i++)
 	{
-		out[i] = (task**)calloc(1, sizeof(task*));
+		out[i] = (task**)calloc(JOBS * TASKS_PER_JOB, sizeof(task*));
+        for (int j = 0; j < JOBS * TASKS_PER_JOB; j++)
+        {
+            //out[i][j]= (task*)calloc(1, sizeof(task));
+        }
         if (out[i] == NULL)
             return NULL;
 
         shuffle(input, size);
-        memcpy(out[i], input, size);
+        memcpy(out[i], input, size* JOBS * TASKS_PER_JOB);
 	}
-	
+    
+    //for (int i = 0; i < size; i++)
+    //{
+    //    printf("POP %d----------------------------------------\n", i);
+    //    for (int j = 0; j < JOBS * TASKS_PER_JOB; j++)
+    //    {
+    //        
+    //        if (printTask(out[i][j]) == -1)
+    //            printf("GENERATION ERROR");
+    //    }
+    //}
+
     return out;
 }
 
@@ -52,14 +67,28 @@ void mutate(task** input)
 
 task** crossover(task** out,task** p1, task** p2) 
 {
-    if (out == NULL)
+    if (out == NULL||p1==NULL||p2==NULL|| p1[0]==NULL || p2[0]==NULL)
         return NULL;
-    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++)
+
+
+
+    for (int i = 0; i < JOBS * TASKS_PER_JOB; i++)
     {
-        int isSet = 0;
-        int offset = 0;
-        (i % 2 == 0 ? getFirstUnusedTask(out, p1) : getFirstUnusedTask(out, p2));
-        printTask(out[i]);
+        if (i% 2 == 0)
+        {
+            out[i] = getFirstUnusedTask(out, p1);
+        }
+        else
+        {
+            out[i] = getFirstUnusedTask(out, p2);
+        }
+        //printf("p1\n");
+        //printTask(p1[i]);
+        //printf("p2\n");
+        //printTask(p2[i]);
+        //printf("out\n");
+        //printTask(out[i]);
+        //printTask(out[i]);
     }
 
     return out;
@@ -70,7 +99,6 @@ task* getFirstUnusedTask(task** dst, task** src)
     int i = 0;
     while(dst[i]!=NULL)
     {
-        int j = 0;
         int isNotThere = 1;
         for(int j=0;j<JOBS*TASKS_PER_JOB; j++)
         {
@@ -80,7 +108,7 @@ task* getFirstUnusedTask(task** dst, task** src)
                 break;
             }
         }
-        if (!isNotThere)
+        if (isNotThere==1)
         {
             return src[i];
         }
@@ -91,95 +119,139 @@ task* getFirstUnusedTask(task** dst, task** src)
 }
 
 
-sol_u* genetic(sol_u* out, task*** input, size_t size, int nb_iter)
+sol_u* genetic(task*** input, size_t size, int nb_iter)
 {
+    
     sol_u** sols = (sol_u**)calloc(2 * size, sizeof(sol_u*));
     if (sols == NULL)
         exit(1);
-    for (int i = 0; i < 2 * size; i++)
+    sol_u* out = allocateNewSolU();
+    if (out == NULL)
+        exit(1);
+    for (uint16_t iter = 0; iter < nb_iter; iter++)
     {
-        sols[i] = (sol_u*)calloc(1, sizeof(sol_u));
-        if (sols[i] == NULL)
-            return NULL;
-    }
-    
-    for (int i = 0; i < nb_iter; i++)
-    {
-        task*** new_gen = (task***)calloc(2*size, sizeof(task**));
+        for (uint64_t i = 0; i < 2 * size; i++)
+        {
+            sols[i] = allocateNewSolU();
+            if (sols[i] == NULL)
+                return NULL;
+        }
+        task*** new_gen = (task***)calloc(2 * size, sizeof(task**));
         if (new_gen == NULL)
             exit(1);
-        for (int i = 0; i < 2*size; i++)
+        for (uint64_t i = 0; i < 2 * size; i++)
         {
-            new_gen[i] = (task**)calloc(JOBS*TASKS_PER_JOB, sizeof(task*));
+            new_gen[i] = (task**)calloc(JOBS * TASKS_PER_JOB, sizeof(task*));
             if (new_gen[i] == NULL)
                 exit(1);
 
             for (int k = 0; k < JOBS * TASKS_PER_JOB; k++)
             {
                 new_gen[i][k] = (task*)calloc(1, sizeof(task));
+                if (new_gen[i][k] == NULL)
+                    exit(1);
             }
         }
-
-        for (int j = 0; j < size; j++)
+        //printf("NEW ITER----------------------------------------------------------------------------------\n");
+        for (uint16_t j = 0; j < size; j++)
         {
             srand(time(NULL));
             int i1 = rand() % size;
             int i2 = rand() % size;
-            new_gen[2 * size - 1 - i] = input[i];
-            crossover(new_gen[i],input[i1], input[i2]);
+            new_gen[2 * size - 1 - j] = input[j];
+            new_gen[j]=crossover(new_gen[j],input[i1], input[i2]);
             
             if (rand() % 100 <= 5)
             {
-                mutate(new_gen[i]);
+                mutate(new_gen[j]);
             }
         }
-        for (int i = 0; i < 2 * size; i++)
+        for (uint16_t i = 0; i < 2 * size; i++)
         {
             if (sols[i] == NULL)
                 exit(1);
-            if (new_gen[i] == NULL)
+            if (*new_gen[i] == NULL)
                 printf("ALED, NEW GEN NULL A I=%d\n", i);
             solution_decoding(sols[i], new_gen[i]);
         }
 
         qsort(sols, 2*size, sizeof(sol_u*), cmpSolU);
 
-        for (int i = size; i < 2 * size; i++)
+        for (uint64_t i = size; i < 2 * size; i++)
         {
             solution_encoding(input[i - size],sols[i - size]);
-            for (int j = 0; j < TASKS_PER_JOB * JOBS; i++)
+            for (int j = 0; j < TASKS_PER_JOB * JOBS; j++)
             {
-                free(new_gen[i][j]);
+                //printf("i=%lld j=%d %d\n", i, j, _CrtCheckMemory());
+                //printTask(new_gen[i][j]);
+                //free(new_gen[i][j]);
             }
-            free(new_gen[i]);
+            //free(new_gen[i]);
         }
-        new_gen = (task***)realloc(size, sizeof(task**));
-        for (int i = 0; i < size; i++)
+        task*** aux = new_gen;
+        //printf("new_gen avant realloc: %p, taille=%lld\n", new_gen, _msize(new_gen));
+        new_gen = (task***)realloc(new_gen, size*sizeof(task**));
+        if (new_gen == NULL)
         {
-            free(input[i]);
+            free(aux);
+            exit(1);
         }
-        free(input);
+        //printf("%d\n",_CrtCheckMemory());
+        //printf("input: %p, taille=%lld\n", input, _msize(input));
+        //printf("new_gen apres realloc: %p, taille=%lld\n", new_gen,_msize(new_gen));
+        //for (uint64_t i = 0; i < size; i++)
+        //{
+        //    printf("NOUVEAU GENE------------------------------------------------------\n");
+        //    for (uint16_t j = 0; j < TASKS_PER_JOB * JOBS; j++)
+        //    {
+        //        printTask(input[i][j]);
+        //    }
+        //}
         input = new_gen;
+        //printf("input apres assignation a new_gen: %p, taille=%lld\n",input, _msize(input));
+        //printf("input apres free new_gen: %p, taille=%lld\n", input, _msize(input));
+
+        for (uint64_t i = 1; i < 2 * size; i++)
+        {
+            free(sols[i]);
+            /*printf("%d\n", _CrtCheckMemory());*/
+        }
+        //printf("HEIN-------------------------------------------------------------------------------------------------\n");
+
+        //for (uint64_t i = 0; i < size; i++)
+        //{
+        //    printf("NOUVEAU GENE------------------------------------------------------\n");
+        //    for (uint16_t j = 0; j < TASKS_PER_JOB * JOBS; j++)
+        //    {
+        //        printTask(input[i][j]);
+        //    }
+        //}
     }
 
-    out = input[0];
+    out = sols[0];
 
-
-    for (int i = 1; i < size; i++)
+    for (uint16_t i = 0; i < size; i++)
     {
         free(input[i]);
     }
-
     free(input);
+
+    free(sols);
+
+    return out;
     
 }
 
 void solution_encoding(task** dest, sol_u* input)
 {
-
-    for (int i = 0; i < JOBS * TASKS_PER_JOB; i++)
+    int k = 0;
+    for (int i = 0; i < TASKS_PER_JOB; i++)
     {
-        dest[i] = input->machine_list + i;
+        for (int j = 0; j < JOBS; j++)
+        {
+            dest[k] = input->machine_list[i]->task_list[j];
+            k++;
+        }
     }
 
     qsort(dest, JOBS * TASKS_PER_JOB, sizeof(task*), cmpTask);
@@ -189,8 +261,9 @@ void solution_decoding(sol_u* dest,task** input)
 {
     for (int i = 0; i < JOBS * TASKS_PER_JOB; i++)
     {
-        if (addTaskToSolU(dest, input[i]) != 1)
-            exit(1);
+        //printf("SOLUTION DECODING LOOP %d-----------------------------------\n", i);
+        //printTask(input[i]);
+        addTaskToSolU(dest, input[i]);
     }
 
     dest->cmax = getResultCmax(input);

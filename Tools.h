@@ -53,3 +53,5 @@ int cmpTask(const void* a, const void* b);
 int cmpJob(const void* a, const void* b);
 
 void dumpSolutionUToFile(sol_u* sol);
+
+task* getIthTask(sol_u* sol, uint8_t index);

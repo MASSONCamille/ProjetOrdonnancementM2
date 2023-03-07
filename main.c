@@ -51,11 +51,11 @@ int main(void) {
     printSolutionU(test);
     printf("Resultat: %d\n", getResultCmax(input));
 
-    //printf("\n--------------------\ngenetic\n\n");
-    //input = cloneListTask(data);
-    //genetic(test,pop_creation(input, sizeof(input)),sizeof(input), 50);
-    //printSolutionU(test);
-    //printf("Resultat: %d\n", getResultCmax(input));
+    printf("\n--------------------\ngenetic\n\n");
+    input = cloneListTask(data);
+    test=genetic(pop_creation(input, 8),8, 50);
+    printSolutionU(test);
+    printf("Resultat: %d\n", getResultCmax(input));
 
 	//printSolutionU(test);
 	dumpSolutionUToFile(test);

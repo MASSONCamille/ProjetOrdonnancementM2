@@ -745,3 +745,23 @@ void dumpSolutionUToFile(sol_u* sol)
 	}
 	fclose(f);
 }
+
+task* getIthTask(sol_u* sol, uint8_t index)
+{
+    task** aux = (task**)calloc(12, sizeof(task*));
+    task* out;
+    int k = 0;
+    for (int i = 0; i < TASKS_PER_JOB; i++)
+    {
+        for (int j = 0; j < JOBS; j++)
+        {
+            aux[k] = sol->machine_list[i]->task_list[j];
+            k++;
+        }
+    }
+
+    qsort(aux, sizeof(task*), TASKS_PER_JOB * JOBS, cmpTask);
+    out = aux[index];
+    free(aux);
+    return out;
+}

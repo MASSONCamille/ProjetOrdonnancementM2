@@ -7,7 +7,7 @@ void mutate(task** input);
 
 task** crossover(task** out,task** p1, task** p2);
 
-sol_u* genetic(sol_u* out, task*** input, size_t size, int nb_iter);
+sol_u* genetic(task*** input, size_t size, int nb_iter);
 
 task* getFirstUnusedTask(task** dst, task** src);
 
