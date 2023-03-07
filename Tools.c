@@ -12,6 +12,33 @@ int cmp(const void *a, const void *b) {
     return x[0] - y[0];
 }
 
+int cmpSolU(const void* a, const void* b)
+{
+    sol_u* x = *(sol_u**)a;
+    sol_u* y = *(sol_u**)b;
+
+    return x->cmax-y->cmax;
+}
+
+int cmpTask(const void* a, const void* b)
+{
+    task* x = *(task**)a;
+    task* y = *(task**)b;
+
+    return x->start_date - y->start_date;
+}
+
+int cmpJob(const void* a, const void* b)
+{
+    job* x = *(job**)a;
+    job* y = *(job**)b;
+
+    return *(x->length)- *(y->length);
+}
+
+
+
+
 // Minimum PJ -> Minimum Cmax -> Minimum JobRestant -> Hasard
 task getTaskH3(task **input) { // warning "input" most be short
     task res; // instance de retour
@@ -471,11 +498,23 @@ void taskQS(task **tasklist, size_t taille) {
 
 int8_t addTaskToSolU(sol_u* sol, task* t) {
     int k = 0;
+    for (int i = 0; i< TASKS_PER_JOB; i++)
+    {
+        for (int j = 0; j < JOBS; j++)
+        {
+            if (t == sol->machine_list[i]->task_list[j])
+                printf("DUPLICATE VALUE\n");
+        }
+    }
+
+
     while (sol->machine_list[t->machine_number]->task_list[k]->length>0)
     {
         k++;
     }
-    uint8_t* aux=(uint8_t*)calloc(6* TASKS_PER_JOB* JOBS, sizeof(uint8_t));
+    if(k>=JOBS)
+        printf("ERREUR\n");
+    uint8_t* aux=(uint8_t*)calloc(MAX_TASK_LENGTH* TASKS_PER_JOB* JOBS, sizeof(uint8_t));
     if (aux == NULL)
         return -1;
     for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
@@ -483,7 +522,7 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
         for (uint8_t j = 0; j < JOBS; j++)
         {//
             // 
-            if (sol->machine_list[i]->task_list[j]->length>0 && (i==t->machine_number||j==t->job))
+            if ((i==t->machine_number||j==t->job))//sol->machine_list[i]->task_list[j]->length>0 && 
             {
                 aux[sol->machine_list[i]->task_list[j]->start_date] = sol->machine_list[i]->task_list[j]->length;
             }
@@ -494,9 +533,15 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
 
     int num = 0;
     int size = 0;
-    for (uint8_t i = 0; i < 6 * TASKS_PER_JOB * JOBS; i++)
-    {
+    //printf("placed conflicting task for job %d and machine %d: %d\n",t->job,t->machine_number, count);
+    //for (int i = 0; i < MAX_TASK_LENGTH * TASKS_PER_JOB * JOBS; i++)
+    //{
+    //    printf("%d", aux[i]);
+    //}
+    //printf("\n");
 
+    for (int i = 0; i < MAX_TASK_LENGTH * TASKS_PER_JOB * JOBS; i++)
+    {
         if (num > 0)
         {
             aux[i] = 1;
@@ -505,26 +550,24 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
         if (aux[i] > 1)
         {
             size = 0;
-            num = aux[i]-1;
+            num = aux[i] - 1;
             aux[i] = 1;
         }
         else if(aux[i]==0)
         {
             size++;
+            if (size == t->length)
+            {
+                t->start_date = (i - size) + 1;
+                break;
+            }
         }
-
-        if (size == t->length)
+        else
         {
-            t->start_date = (i-size)+1;
-            break;
+            continue;
         }
 
     }
-    //for (uint8_t i = 0; i < 6 * TASKS_PER_JOB * JOBS; i++)
-    //{
-    //    printf("%d", aux[i]);
-    //}
-    //printf("\n");
 
     sol->machine_list[t->machine_number]->task_list[k] = t;
 

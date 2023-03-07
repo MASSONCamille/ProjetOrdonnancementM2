@@ -44,6 +44,12 @@ uint8_t searchArrayForIndex(uint8_t* arr, uint8_t size, uint8_t val);
 
 int cmp(const void* a, const void* b);
 
-int cmpInt(uint8_t a, uint8_t b);
+int cmpInt(const void* a,const void* b);
+
+int cmpSolU(const void* a, const void* b);
+
+int cmpTask(const void* a, const void* b);
+
+int cmpJob(const void* a, const void* b);
 
 void dumpSolutionUToFile(sol_u* sol);

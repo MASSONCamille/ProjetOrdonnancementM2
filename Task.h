@@ -7,6 +7,7 @@
 
 #define TASKS_PER_JOB 3
 #define JOBS 4
+#define MAX_TASK_LENGTH 6
 
 typedef struct task{
 	uint8_t machine_number, //where the task will be
@@ -21,19 +22,14 @@ typedef struct machine {
 
 typedef struct sol_u {
 	machine** machine_list;//TASKS PER JOBS
+	uint16_t cmax;
 }sol_u;
 
-typedef struct sol_c {
-	uint8_t* array;//TASKS PER JOBS*JOBS
-}sol_c;
-
-sol_c* solution_encoding(sol_u* input);
-
-sol_u* solution_decoding(sol_c* input);
-
-uint8_t task_encoding(task input);
-
-task task_decoding(uint8_t input);
+typedef struct job {
+	task** task;
+	uint8_t* length;
+	uint8_t* num;
+} job;
 
 task** generateTasks(void);
 
