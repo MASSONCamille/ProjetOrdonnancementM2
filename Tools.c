@@ -543,17 +543,18 @@ int16_t addTaskToSolU(sol_u* sol, task* t) {
     for (int i = 0; i < MAX_TASK_LENGTH * TASKS_PER_JOB * JOBS; i++)
     {
 
-        if (aux[i] > 1)
+        if (aux[i] > 0)
         {
             size = 0;
-            num = (aux[i] > num ? aux[i] : num);
+            if (aux[i] > num)
+                num = aux[i];
             num--;
-            aux[i] = 1;
+            aux[i] = -1;
         }
-        else if (num > 0)
+        else if (num > 0 && aux[i]!=-1)
         {
             size = 0;
-            aux[i] = 1;
+            aux[i] = -1;
             num--;
         }
 
