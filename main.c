@@ -16,7 +16,7 @@ int main(void) {
     _CrtSetDbgFlag(tmp);
 #endif
 
-    task **data = generateTasksBis();
+    task **data = generateTasks();
     sol_u *test = allocateNewSolU();
 
 

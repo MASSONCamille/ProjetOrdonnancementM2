@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #define TASKS_PER_JOB 3
-#define JOBS 12
+#define JOBS 4
 #define MAX_TASK_LENGTH 6
 
 typedef struct task{
@@ -33,8 +33,6 @@ typedef struct job {
 } job;
 
 task** generateTasks(void);
-
-task** generateTasksBis(void);
 
 task** freeTasks(task** input);
 
