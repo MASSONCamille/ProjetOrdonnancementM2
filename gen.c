@@ -207,6 +207,16 @@ sol_u* genetic(task*** input, size_t size, int nb_iter)
         //        printTask(input[i][j]);
         //    }
         //}
+
+        for (uint32_t i = 0; i < size; i++)
+        {
+            for (uint16_t j = 0; j < JOBS * TASKS_PER_JOB; j++)
+            {
+                //free(input[i][j]);
+            }
+            free(input[i]);
+        }
+
         input = new_gen;
         //printf("input apres assignation a new_gen: %p, taille=%lld\n",input, _msize(input));
         //printf("input apres free new_gen: %p, taille=%lld\n", input, _msize(input));

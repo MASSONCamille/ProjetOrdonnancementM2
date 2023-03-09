@@ -20,7 +20,7 @@ typedef struct machine {
 	struct task** task_list;//JOBS
 }machine;
 
-__declspec(align(2)) typedef struct sol_u {
+typedef struct sol_u {
 	machine** machine_list;//TASKS PER JOBS
 	uint16_t cmax;
 	uint8_t pad[6];

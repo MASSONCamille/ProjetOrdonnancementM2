@@ -514,15 +514,15 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
     }
     if(k>=JOBS)
         printf("ERREUR\n");
-    uint8_t* aux=(uint8_t*)calloc(MAX_TASK_LENGTH* TASKS_PER_JOB* JOBS, sizeof(uint8_t));
+    int8_t* aux=(uint8_t*)calloc(MAX_TASK_LENGTH* TASKS_PER_JOB* JOBS, sizeof(uint8_t));
     if (aux == NULL)
         return -1;
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    for (int i = 0; i < TASKS_PER_JOB; i++)
     {
-        for (uint8_t j = 0; j < JOBS; j++)
+        for (int j = 0; j < JOBS; j++)
         {//
             // 
-            if ((i==t->machine_number||j==t->job))//sol->machine_list[i]->task_list[j]->length>0 && 
+            if (sol->machine_list[i]->task_list[j]->length > 0 && (i==t->machine_number||j==t->job))
             {
                 aux[sol->machine_list[i]->task_list[j]->start_date] = sol->machine_list[i]->task_list[j]->length;
             }
@@ -542,17 +542,19 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
 
     for (int i = 0; i < MAX_TASK_LENGTH * TASKS_PER_JOB * JOBS; i++)
     {
-        if (num > 0)
-        {
-            aux[i] = 1;
-            num--;
-        }
+
         if (aux[i] > 1)
         {
             size = 0;
             num = aux[i] - 1;
             aux[i] = 1;
         }
+        else if (num > 0)
+        {
+            aux[i] = 1;
+            num--;
+        }
+
         else if(aux[i]==0)
         {
             size++;
@@ -564,7 +566,7 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
         }
         else
         {
-            continue;
+            ;
         }
 
     }
