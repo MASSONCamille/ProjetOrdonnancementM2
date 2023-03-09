@@ -546,11 +546,13 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
         if (aux[i] > 1)
         {
             size = 0;
-            num = aux[i] - 1;
+            num = (aux[i] > num ? aux[i] : num);
+            num--;
             aux[i] = 1;
         }
         else if (num > 0)
         {
+            size = 0;
             aux[i] = 1;
             num--;
         }
@@ -560,7 +562,7 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
             size++;
             if (size == t->length)
             {
-                t->start_date = (i - size) + 1;
+                t->start_date = (i - size)+1;
                 break;
             }
         }
@@ -575,7 +577,7 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
 
     free(aux);
 
-    return 1;
+    return 0;
 }
 
 sol_u* allocateNewSolU(void)
