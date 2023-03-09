@@ -2,12 +2,12 @@
 #include "Tools.h"
 
 int cmpInt(const void* a, const void* b) {
-    return (*(uint8_t*)a-*(uint8_t*)b);
+    return (*(uint16_t*)a-*(uint16_t*)b);
 }
 
 int cmp(const void *a, const void *b) {
-    uint8_t *x = *(uint8_t **) a;
-    uint8_t *y = *(uint8_t **) b;
+    uint16_t *x = *(uint16_t **) a;
+    uint16_t *y = *(uint16_t **) b;
 
     return x[0] - y[0];
 }
@@ -51,7 +51,7 @@ task getTaskH3(task **input) { // warning "input" most be short
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+    for (uint16_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
         temp0[i] = (task *) calloc(1, sizeof(task));
         if (temp0[i] == NULL) {
             fprintf(stderr, "Out of memory");
@@ -61,7 +61,7 @@ task getTaskH3(task **input) { // warning "input" most be short
     int tailleTemp0 = 0;
 
     for (int i = 0; i < JOBS * TASKS_PER_JOB; ++i) { // recup tache non placé
-        if (input[i]->start_date == INT8_MAX) {
+        if (input[i]->start_date == INT16_MAX) {
             temp0[tailleTemp0] = input[i];
             tailleTemp0++;
         }
@@ -77,7 +77,7 @@ task getTaskH3(task **input) { // warning "input" most be short
     // -----------------------
     // --- Test Min Length ---
 
-    int minLength = INT8_MAX;
+    int minLength = INT16_MAX;
     for (int i = 0; i < tailleTemp0; ++i) { // recup du min Length (val)
         if (temp0[i]->length < minLength) {
             minLength = temp0[i]->length;
@@ -89,7 +89,7 @@ task getTaskH3(task **input) { // warning "input" most be short
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (uint8_t i = 0; i < tailleTemp0; i++) {
+    for (uint16_t i = 0; i < tailleTemp0; i++) {
         temp1[i] = (task *) calloc(1, sizeof(task));
         if (temp1[i] == NULL) {
             fprintf(stderr, "Out of memory");
@@ -116,13 +116,13 @@ task getTaskH3(task **input) { // warning "input" most be short
     // ---------------------
     // --- Test Min Cmax ---
 
-    uint8_t *tabMinCmax = (uint8_t *) calloc(tailleTemp1, sizeof(uint8_t));
+    uint16_t *tabMinCmax = (uint16_t *) calloc(tailleTemp1, sizeof(uint16_t));
     for (int i = 0; i < tailleTemp1; ++i) { // recup lst Cmax
         task *test = temp1[i];
         tabMinCmax[i] = getCmax(input, test);
     }
 
-    int minCmax = INT8_MAX;
+    int minCmax = INT16_MAX;
     for (int i = 0; i < tailleTemp1; ++i) { // recup du min Cmax (val)
         if (tabMinCmax[i] < minCmax){
             minCmax = tabMinCmax[i];
@@ -134,7 +134,7 @@ task getTaskH3(task **input) { // warning "input" most be short
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (uint8_t i = 0; i < tailleTemp1; i++) {
+    for (uint16_t i = 0; i < tailleTemp1; i++) {
         temp2[i] = (task *) calloc(1, sizeof(task));
         if (temp2[i] == NULL) {
             fprintf(stderr, "Out of memory");
@@ -162,13 +162,13 @@ task getTaskH3(task **input) { // warning "input" most be short
     // ----------------------------
     // --- Test Min Job Restant ---
 
-    uint8_t *tabMinJobRestant = (uint8_t *) calloc(tailleTemp2, sizeof(uint8_t));
+    uint16_t *tabMinJobRestant = (uint16_t *) calloc(tailleTemp2, sizeof(uint16_t));
     for (int i = 0; i < tailleTemp2; ++i) { // recup lst Job Restant
         task *test = temp2[i];
         tabMinJobRestant[i] = getJobRestant(input, test);
     }
 
-    int minJobRestant = INT8_MAX;
+    int minJobRestant = INT16_MAX;
     for (int i = 0; i < tailleTemp2; ++i) { // recup min Job Restant (val)
         if (tabMinJobRestant[i] < minJobRestant) {
             minJobRestant = tabMinJobRestant[i];
@@ -197,7 +197,7 @@ task getTaskH4(task **input){
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
+    for (uint16_t i = 0; i < JOBS * TASKS_PER_JOB; i++) {
         temp0[i] = (task *) calloc(1, sizeof(task));
         if (temp0[i] == NULL) {
             fprintf(stderr, "Out of memory");
@@ -207,7 +207,7 @@ task getTaskH4(task **input){
     int tailleTemp0 = 0;
 
     for (int i = 0; i < JOBS * TASKS_PER_JOB; ++i) { // recup de tous les non placées
-        if (input[i]->start_date == INT8_MAX) {
+        if (input[i]->start_date == INT16_MAX) {
             temp0[tailleTemp0] = input[i];
             tailleTemp0++;
         }
@@ -223,13 +223,13 @@ task getTaskH4(task **input){
     // ---------------------
     // --- Test Min Cmax ---
 
-    uint8_t *tabMinCmax = (uint8_t *) calloc(tailleTemp0, sizeof(uint8_t));
+    uint16_t *tabMinCmax = (uint16_t *) calloc(tailleTemp0, sizeof(uint16_t));
     for (int i = 0; i < tailleTemp0; ++i) { // recup lst Cmax
         task *test = temp0[i];
         tabMinCmax[i] = getCmax(input, test);
     }
 
-    int minCmax = INT8_MAX;
+    int minCmax = INT16_MAX;
     for (int i = 0; i < tailleTemp0; ++i) { // recup du min Cmax (val)
         if (tabMinCmax[i] < minCmax){
             minCmax = tabMinCmax[i];
@@ -241,7 +241,7 @@ task getTaskH4(task **input){
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (uint8_t i = 0; i < tailleTemp0; i++) {
+    for (uint16_t i = 0; i < tailleTemp0; i++) {
         temp1[i] = (task *) calloc(1, sizeof(task));
         if (temp1[i] == NULL) {
             fprintf(stderr, "Out of memory");
@@ -268,13 +268,13 @@ task getTaskH4(task **input){
     // ----------------------------
     // --- Test Min Job Restant ---
 
-    uint8_t *tabMinJobRestant = (uint8_t *) calloc(tailleTemp1, sizeof(uint8_t));
+    uint16_t *tabMinJobRestant = (uint16_t *) calloc(tailleTemp1, sizeof(uint16_t));
     for (int i = 0; i < tailleTemp1; ++i) { // recup lst Job Restant
         task *test = temp1[i];
         tabMinJobRestant[i] = getJobRestant(input, test);
     }
 
-    int minJobRestant = INT8_MAX;
+    int minJobRestant = INT16_MAX;
     for (int i = 0; i < tailleTemp1; ++i) { // recup min Job Restant (val)
         if (tabMinJobRestant[i] < minJobRestant) {
             minJobRestant = tabMinJobRestant[i];
@@ -286,7 +286,7 @@ task getTaskH4(task **input){
         fprintf(stderr, "Out of memory");
         exit(0);
     }
-    for (uint8_t i = 0; i < tailleTemp1; i++) {
+    for (uint16_t i = 0; i < tailleTemp1; i++) {
         temp2[i] = (task *) calloc(1, sizeof(task));
         if (temp2[i] == NULL) {
             fprintf(stderr, "Out of memory");
@@ -314,7 +314,7 @@ task getTaskH4(task **input){
     // -----------------------
     // --- Test Min Length ---
 
-    int minLength = INT8_MAX;
+    int minLength = INT16_MAX;
     for (int i = 0; i < tailleTemp2; ++i) { // recup du min Length (val)
         if (temp2[i]->length < minLength) {
             minLength = temp2[i]->length;
@@ -337,7 +337,7 @@ task** cloneListTask(task** taskList){
     if (dcopy == NULL)
         return NULL;
 
-    for (uint8_t i = 0; i < JOBS * TASKS_PER_JOB; i++)
+    for (uint16_t i = 0; i < JOBS * TASKS_PER_JOB; i++)
     {
         task* t = (task*)calloc(1, sizeof(task));
         if (t == NULL)
@@ -394,7 +394,7 @@ void printLstTask(task** taskList){
     }
 }
 
-uint8_t getResultCmax(task **taskList){
+uint16_t getResultCmax(task **taskList){
     int numJob;
     int cMax;
     int result = 0;
@@ -411,13 +411,13 @@ uint8_t getResultCmax(task **taskList){
     return result;
 }
 
-uint8_t getCmax(task **tasklist, task *taskToAdd) {
+uint16_t getCmax(task **tasklist, task *taskToAdd) {
     int startdate = 0;
     int nbMachine = taskToAdd->machine_number;
 
     for (int j = 0; j < TASKS_PER_JOB * JOBS; j++) {
         if (tasklist[j]->machine_number == nbMachine) {
-            if (tasklist[j]->start_date != INT8_MAX) {
+            if (tasklist[j]->start_date != INT16_MAX) {
                 if ((tasklist[j]->start_date + tasklist[j]->length) > startdate) {
                     startdate = tasklist[j]->start_date + tasklist[j]->length;
                 }
@@ -428,7 +428,7 @@ uint8_t getCmax(task **tasklist, task *taskToAdd) {
     int nbJob = taskToAdd->job;
     for (int j = 0; j < TASKS_PER_JOB * JOBS; j++) {
         if (tasklist[j]->job == nbJob) {
-            if (tasklist[j]->start_date != INT8_MAX) {
+            if (tasklist[j]->start_date != INT16_MAX) {
                 if ((tasklist[j]->start_date + tasklist[j]->length) > startdate) {
                     startdate = tasklist[j]->start_date + tasklist[j]->length;
                 }
@@ -438,21 +438,21 @@ uint8_t getCmax(task **tasklist, task *taskToAdd) {
     return (startdate+taskToAdd->length);
 }
 
-uint8_t nbTachePasPlacee(task **tasklist){
+uint16_t nbTachePasPlacee(task **tasklist){
     int nbTache = 0;
     for (int i = 0; i < TASKS_PER_JOB * JOBS; ++i) {
-        if(tasklist[i]->start_date == INT8_MAX){
+        if(tasklist[i]->start_date == INT16_MAX){
             nbTache++;
         }
     }
     return nbTache;
 }
 
-uint8_t getJobRestant(task **tasklist, task *taskToAdd){
+uint16_t getJobRestant(task **tasklist, task *taskToAdd){
     int lenJobRestant = 0;
     int numJob = taskToAdd->job;
     for (int i = 0; i < JOBS*TASKS_PER_JOB; ++i) {
-        if((tasklist[i]->job == numJob) && (tasklist[i]->start_date == INT8_MAX)){
+        if((tasklist[i]->job == numJob) && (tasklist[i]->start_date == INT16_MAX)){
             lenJobRestant += tasklist[i]->length;
         }
     }
@@ -460,13 +460,13 @@ uint8_t getJobRestant(task **tasklist, task *taskToAdd){
 }
 
 void taskQS(task **tasklist, size_t taille) {
-    uint8_t **a = (uint8_t **) malloc(taille * sizeof(uint8_t *));
+    uint16_t **a = (uint16_t **) malloc(taille * sizeof(uint16_t *));
     if (a == NULL) {
         fprintf(stderr, "Out of memory");
         exit(0);
     }
     for (int i = 0; i < taille; ++i) {
-        a[i] = (uint8_t *) malloc(2 * sizeof(uint8_t));
+        a[i] = (uint16_t *) malloc(2 * sizeof(uint16_t));
         if (a[i] == NULL) {
             fprintf(stderr, "Out of memory");
             exit(0);
@@ -480,15 +480,15 @@ void taskQS(task **tasklist, size_t taille) {
     qsort(a, taille, sizeof *a, cmp);   /* qsort array of pointers */
 
     task **buffer = (task **) calloc(taille, sizeof(task *));
-    for (uint8_t i = 0; i < taille; i++) {
+    for (uint16_t i = 0; i < taille; i++) {
         buffer[i] = tasklist[i];
     }
 
-    for (uint8_t i = 0; i < taille; i++) {
+    for (uint16_t i = 0; i < taille; i++) {
         tasklist[i] = buffer[a[i][1]];
     }
 
-    for (uint8_t i = 0; i < taille; i++) {
+    for (uint16_t i = 0; i < taille; i++) {
         free(a[i]);
     }
     free(a);
@@ -496,7 +496,7 @@ void taskQS(task **tasklist, size_t taille) {
 }
 
 
-int8_t addTaskToSolU(sol_u* sol, task* t) {
+int16_t addTaskToSolU(sol_u* sol, task* t) {
     int k = 0;
     for (int i = 0; i< TASKS_PER_JOB; i++)
     {
@@ -514,7 +514,7 @@ int8_t addTaskToSolU(sol_u* sol, task* t) {
     }
     if(k>=JOBS)
         printf("ERREUR\n");
-    int8_t* aux=(uint8_t*)calloc(MAX_TASK_LENGTH* TASKS_PER_JOB* JOBS, sizeof(uint8_t));
+    int16_t* aux=(uint16_t*)calloc(MAX_TASK_LENGTH* TASKS_PER_JOB* JOBS, sizeof(uint16_t));
     if (aux == NULL)
         return -1;
     for (int i = 0; i < TASKS_PER_JOB; i++)
@@ -594,7 +594,7 @@ sol_u* allocateNewSolU(void)
     {
         return NULL;
     }
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    for (uint16_t i = 0; i < TASKS_PER_JOB; i++)
     {
         sol->machine_list[i] = (machine*)calloc(1, sizeof(machine));
     }
@@ -603,20 +603,20 @@ sol_u* allocateNewSolU(void)
     {
         return NULL;
     }
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
+    for (uint16_t i = 0; i < TASKS_PER_JOB; i++) {
         if (sol->machine_list[i] == NULL)
         {
             return NULL;
         }
         sol->machine_list[i]->task_list = (task**)calloc(JOBS, sizeof(task*));
-        for (uint8_t j = 0; j < JOBS; j++)
+        for (uint16_t j = 0; j < JOBS; j++)
         {
             if (sol->machine_list[i]->task_list == NULL)
                 return NULL;
             sol->machine_list[i]->task_list[j] = (task*)calloc(1, sizeof(task));
             if (sol->machine_list[i]->task_list[j] == NULL)
                 return NULL;
-            sol->machine_list[i]->task_list[j]->start_date = INT8_MAX;
+            sol->machine_list[i]->task_list[j]->start_date = INT16_MAX;
         }
     }
 
@@ -627,14 +627,14 @@ sol_u *freeSolU(sol_u *sol) {
     if (sol == NULL) {
         return NULL;
     }
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++) {
+    for (uint16_t i = 0; i < TASKS_PER_JOB; i++) {
 
-        for (uint8_t j = 0; j < JOBS; j++) {
+        for (uint16_t j = 0; j < JOBS; j++) {
             free(sol->machine_list[i]->task_list[j]);
         }
         free(sol->machine_list[i]->task_list);
     }
-    for (int8_t i = 0; i < TASKS_PER_JOB; i++) {
+    for (int16_t i = 0; i < TASKS_PER_JOB; i++) {
         free(sol->machine_list[i]);
     }
     free(sol->machine_list);
@@ -658,13 +658,13 @@ void *freeAll(sol_u *sol, task **tasks) {
     return NULL;
 }
 
-int8_t printSolutionU(sol_u* sol) {
+int16_t printSolutionU(sol_u* sol) {
     if (sol == NULL)
         return -1;
 
-    for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+    for (uint16_t i = 0; i < TASKS_PER_JOB; i++)
     {
-        for (uint8_t j = 0; j < JOBS; j++)
+        for (uint16_t j = 0; j < JOBS; j++)
         {
             if (printTask(sol->machine_list[i]->task_list[j]) == -1)
                 return -1;
@@ -674,13 +674,13 @@ int8_t printSolutionU(sol_u* sol) {
     return 1;
 }
 
-uint8_t searchArrayForIndex(uint8_t *arr, uint8_t size, uint8_t val) {
-    for (uint8_t i = 0; i < size; i++) {
+uint16_t searchArrayForIndex(uint16_t *arr, uint16_t size, uint16_t val) {
+    for (uint16_t i = 0; i < size; i++) {
         if (arr[i] == val)
             return i;
     }
 
-    return UINT8_MAX;
+    return UINT16_MAX;
 }
 
 void dumpSolutionUToFile(sol_u* sol)
@@ -688,10 +688,10 @@ void dumpSolutionUToFile(sol_u* sol)
 	FILE* f = fopen("dump", "w");
 	if (f == NULL)
 		exit(1);
-	for (uint8_t i = 0; i < TASKS_PER_JOB; i++)
+	for (uint16_t i = 0; i < TASKS_PER_JOB; i++)
 	{
 
-		for (uint8_t j = 0; j < JOBS; j++)
+		for (uint16_t j = 0; j < JOBS; j++)
 		{
 			int length = 0;
 			char* str;
@@ -750,7 +750,7 @@ void dumpSolutionUToFile(sol_u* sol)
 	fclose(f);
 }
 
-task* getIthTask(sol_u* sol, uint8_t index)
+task* getIthTask(sol_u* sol, uint16_t index)
 {
     task** aux = (task**)calloc(12, sizeof(task*));
     task* out;

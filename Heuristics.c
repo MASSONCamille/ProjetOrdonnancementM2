@@ -21,9 +21,9 @@ sol_u *jobs_increasing_time(task **input) {
         //printf("%d\n", _CrtCheckMemory());
         if (jobs[i]->task == NULL)
             return NULL;
-        jobs[i]->length = (uint8_t*)calloc(1,sizeof(uint8_t));
+        jobs[i]->length = (uint16_t*)calloc(1,sizeof(uint16_t));
         //printf("%d\n", _CrtCheckMemory());
-        jobs[i]->num = (uint8_t*)calloc(1,sizeof(uint8_t));
+        jobs[i]->num = (uint16_t*)calloc(1,sizeof(uint16_t));
         //printf("%d\n", _CrtCheckMemory());
         for (int j = 0; j < TASKS_PER_JOB; j++)
         {
@@ -74,21 +74,21 @@ sol_u *jobs_increasing_time(task **input) {
 	qsort(jobs, JOBS, sizeof(job*), cmpJob);
 
 
-    //for (uint8_t i = 0; i < JOBS; i++) {
+    //for (uint16_t i = 0; i < JOBS; i++) {
     //    printf("%d ", *(jobs[i]->length));
     //}
     //printf("\n");
     sol_u *sol = allocateNewSolU();
 
 
-    //for (uint8_t i = 0; i < JOBS; i++) {
+    //for (uint16_t i = 0; i < JOBS; i++) {
     //    printf("%d ", *(jobs[i]->num));
     //}
     //printf("\n");
 	for (int i = 0; i < JOBS; i++) {
         //throw duplicates when 2 values are equals
 		for (int j = 0; j < JOBS * TASKS_PER_JOB; j++) {
-            if (input[j]->start_date == INT8_MAX)
+            if (input[j]->start_date == INT16_MAX)
             {
                 if (input[j]->job == *(jobs[i]->num))
                     //printf("%d %d\n", input[j]->job, input[j]->start_date);
@@ -127,7 +127,7 @@ sol_u *increasing_task_length(task **input) {
             }
         }
         inc++;
-        if (inc > 12){
+        if (inc > TASKS_PER_JOB * JOBS){
             fprintf(stderr, "trop d'iteration");
             return NULL;
         }
@@ -146,7 +146,7 @@ sol_u *minimizing_Cmax(task **input) {
             }
         }
         inc++;
-        if (inc > 12){
+        if (inc > TASKS_PER_JOB * JOBS){
             fprintf(stderr, "trop d'iteration");
             return NULL;
         }
